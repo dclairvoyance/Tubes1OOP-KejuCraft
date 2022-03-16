@@ -13,12 +13,14 @@ protected:
     string name;
     string type;
     int quantity;
-    static int numOfItem;
 public:
     Item();
-    Item(string name, string type, int quantity);
-    void add();
-    void remove();
+    Item(int id, string name, string type, int quantity);
+    virtual ~Item();
+    int getId();
+    string getName();
+    string getType();
+    int getQuantity();
     virtual void print();
 };
 
@@ -26,7 +28,8 @@ class NonTool : public Item {
 private:
 public:
     NonTool();
-    NonTool(string name, string type, int quantity);
+    NonTool(int id, string name, string type, int quantity);
+    ~NonTool();
     void stack();
     void print();
 };
@@ -36,7 +39,9 @@ private:
     int durability;
 public:
     Tool();
-    Tool(string name, string type, int quantity, int durability);
+    Tool(int id, string name, string type, int quantity, int durability);
+    ~Tool();
+    int getDurability();
     void use();
     void print();
 };

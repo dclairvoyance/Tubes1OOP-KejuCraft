@@ -4,26 +4,34 @@
 #include <iostream>
 #include "Item.h"
 
-int Item::numOfItem = 0;
-
-Item::Item() : id(numOfItem++) {
+Item::Item() : id(0) {
     this->name = "null";
     this->type = "null";
-    this->quantity = 1;
+    this->quantity = 0;
 }
 
-Item::Item(string name, string type, int quantity) : id(numOfItem++) {
+Item::Item(int id, string name, string type, int quantity) : id(id) {
     this->name = name;
     this->type = type;
     this->quantity = quantity;
 }
 
-void Item::add() { // butuh exception pas penuh
-    this->quantity++;
+Item::~Item() {}
+
+int Item::getId() {
+    return this->id;
 }
 
-void Item::remove() { // butuh exception pas kosong
-    this->quantity--;
+string Item::getName() {
+    return this->name;
+}
+
+string Item::getType() {
+    return this->type;
+}
+
+int Item::getQuantity() {
+    return this->quantity;
 }
 
 void Item::print() {
@@ -35,7 +43,7 @@ void Item::print() {
 
 NonTool::NonTool() : Item() {}
 
-NonTool::NonTool(string name, string type, int quantity) : Item(name, type, quantity) {}
+NonTool::NonTool(int id, string name, string type, int quantity) : Item(id, name, type, quantity) {}
 
 void NonTool::stack() {} // kayaknya masukin inventory.cpp
 
@@ -43,10 +51,20 @@ void NonTool::print() {
     Item::print();
 }
 
-Tool::Tool() : Tool("null", "null", 1, 10) {} // Pertama kali dapet, durability = 10
+NonTool::~NonTool() {}
 
-Tool::Tool(string name, string type, int quantity, int durability) : Item(name, type, quantity) {
+Tool::Tool() : Item() {
+    this->durability = 10;
+} // Pertama kali dapet, durability = 10
+
+Tool::Tool(int id, string name, string type, int quantity, int durability) : Item(id, name, type, quantity) {
     this->durability = durability;
+}
+
+Tool::~Tool() {}
+
+int Tool::getDurability() {
+    return this->durability;
 }
 
 void Tool::use() { // butuh exception pas durability 0
