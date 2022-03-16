@@ -11,11 +11,11 @@
 template <class T>
 class Slot {
 protected:
-    int id;
+    string id;
     T item;
 public:
     Slot() {
-        this->id = 0;
+        this->id = "C0";
     }
 };
 
@@ -35,7 +35,7 @@ public:
         int total = this->quantity + other.quantity;
         other.quantity = total>64 ? 64 : total;
         this->quantity = total - other.quantity;
-    } // Menambahkan item ke slot
+    } // Memindahkan item ke slot lain
 };
 
 template <class T>
