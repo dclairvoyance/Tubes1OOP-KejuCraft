@@ -64,8 +64,8 @@ int main() {
 
     ifstream indata;
     string intext, filename;
-    map<int, Tool> toolContainer;
-    map<int, NonTool> nonToolContainer;
+    map<string, Tool> toolContainer;
+    map<string, NonTool> nonToolContainer;
 
     // Input nama file
     cout << "Enter filename: ";
@@ -89,10 +89,10 @@ int main() {
         ss >> isTool;
         if (isTool == "TOOL") {
             Tool item(id, name, type, 0, 10);
-            toolContainer.insert(pair<int, Tool> (item.getId(), item));
+            toolContainer.insert(pair<string, Tool> (item.getName(), item));
         } else {
             NonTool item(id, name, type, 0);
-            nonToolContainer.insert(pair<int, NonTool> (item.getId(), item));
+            nonToolContainer.insert(pair<string, NonTool> (item.getName(), item));
         }
     }
 
@@ -101,8 +101,8 @@ int main() {
     cout << "EOF reached.." << endl;
 
     // Membuat iterator
-    map<int, Tool>::iterator itrTool;
-    map<int, NonTool>::iterator itrNonTool;
+    map<string, Tool>::iterator itrTool;
+    map<string, NonTool>::iterator itrNonTool;
 
     // Mencetak seluruh isi map
     for (itrNonTool = nonToolContainer.begin(); itrNonTool!=nonToolContainer.end(); itrNonTool++) {
