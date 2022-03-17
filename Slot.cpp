@@ -6,12 +6,12 @@
 
 Slot::Slot() {
     this->id = "I0";
-    this->item = NULL;
+    this->ptrItem = NULL;
 }
 
-Slot::Slot(string id, Item* item) {
+Slot::Slot(string id, Item* ptr) {
     this->id = id;
-    this->item = item;
+    this->ptrItem = ptr;
 }
 
 void Slot::setId(string id) {
@@ -20,6 +20,14 @@ void Slot::setId(string id) {
 
 string Slot::getId() {
     return this->id;
+}
+
+Item* Slot::getPointerItem() {
+    return this->ptrItem;
+}
+
+void Slot::setPointerItem(Item* ptr) {
+    this->ptrItem = ptr;
 }
 
 SlotInventory::SlotInventory() : Slot() {
@@ -32,20 +40,28 @@ SlotInventory::SlotInventory(string id, Item* item, int quantity) : Slot(id, ite
 }
 
 SlotInventory::~SlotInventory() {
-    delete[] this->item;
+    delete[] this->ptrItem;
 }
 
 SlotInventory& SlotInventory::operator=(const SlotInventory& other) {
     this->id = other.id;
     this->quantity = other.quantity;
-    delete[] this->item;
-    this->item = new Item;
-    this->item = other.item;
+    delete[] this->ptrItem;
+    this->ptrItem = new Item;
+    this->ptrItem = other.ptrItem;
     return *this;
+}
+
+int SlotInventory::getQuantity() {
+    return this->quantity;
 }
 
 void SlotInventory::setQuantity(int quantity) {
     this->quantity = quantity;
+}
+
+void SlotInventory::addQuantity(int quantity) {
+    this->quantity += quantity;
 }
 
 void SlotInventory::addItemTo(SlotInventory& other) {
