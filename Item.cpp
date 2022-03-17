@@ -34,6 +34,10 @@ int Item::getQuantity() {
     return this->quantity;
 }
 
+void Item::addQuantity(int quantity) {
+    this->quantity += quantity;
+}
+
 void Item::print() {
     cout << "id: " << this->id << endl;
     cout << "name: " << this->name << endl;
@@ -44,8 +48,6 @@ void Item::print() {
 NonTool::NonTool() : Item() {}
 
 NonTool::NonTool(int id, string name, string type, int quantity) : Item(id, name, type, quantity) {}
-
-void NonTool::stack() {} // kayaknya masukin inventory.cpp
 
 void NonTool::print() {
     Item::print();

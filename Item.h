@@ -21,6 +21,7 @@ public:
     string getName();
     string getType();
     int getQuantity();
+    void addQuantity(int quantity);
     virtual void print();
 };
 
@@ -29,8 +30,7 @@ private:
 public:
     NonTool();
     NonTool(int id, string name, string type, int quantity);
-    ~NonTool();
-    void stack();
+    virtual ~NonTool();
     void print();
 };
 
@@ -40,7 +40,7 @@ private:
 public:
     Tool();
     Tool(int id, string name, string type, int quantity, int durability);
-    ~Tool();
+    virtual ~Tool();
     int getDurability();
     void use();
     void print();
