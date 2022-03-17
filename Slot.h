@@ -8,38 +8,30 @@
 #include <iostream>
 #include "Item.h"
 
-template <class T>
 class Slot {
 protected:
     string id;
-    T item;
+    Item* item;
 public:
-    Slot() {
-        this->id = "C0";
-    }
+    Slot();
+    Slot(string id, Item* item);
+    void setId(string id);
+    string getId();
 };
 
-template <class T>
-class SlotInventory : public Slot<T> {
+class SlotInventory : public Slot {
 private:
     int quantity;
 public:
-    SlotInventory() : Slot() {
-        this->quantity = 0;
-    }
-    SlotInventory(int id, int quantity) {
-        this->id = id;
-        this->quantity = quantity;
-    }
-    void addItemTo(SlotInventory& other) {
-        int total = this->quantity + other.quantity;
-        other.quantity = total>64 ? 64 : total;
-        this->quantity = total - other.quantity;
-    } // Memindahkan item ke slot lain
+    SlotInventory();
+    SlotInventory(string id, Item* item, int quantity);
+    ~SlotInventory();
+    SlotInventory& operator=(const SlotInventory& other);
+    void setQuantity(int quantity);
+    void addItemTo(SlotInventory& other); // Memindahkan item ke slot lain
 };
 
-template <class T>
-class SlotCrafting : public Slot<T> {
+class SlotCrafting : public Slot {
 private:
 public:
     SlotCrafting();
