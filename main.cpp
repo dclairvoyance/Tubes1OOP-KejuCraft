@@ -147,7 +147,7 @@ int main() {
                 // Temukan semua slot yang berisi item ini
                 int index = playerInventory.findIndexItem(&itrNonTool->second);
                 while (itemQty > 0 && index != -1) {
-                    int remainingQty = 64 - playerInventory.getQuantityAtIndex(index);
+                    int remainingQty = MAX_CAP - playerInventory.getQuantityAtIndex(index);
                     if (remainingQty >= itemQty) {
                         playerInventory.addQuantityAtIndex(index, itemQty);
                         itrNonTool->second.addQuantity(itemQty);
@@ -163,9 +163,9 @@ int main() {
                 index = playerInventory.findIndexEmpty();
                 while (itemQty > 0 && index != -1) {
                     int QtyToBeAdded;
-                    if (itemQty > 64) {
-                        QtyToBeAdded = 64;
-                        itemQty -= 64;
+                    if (itemQty > MAX_CAP) {
+                        QtyToBeAdded = MAX_CAP;
+                        itemQty -= MAX_CAP;
                     } else {
                         QtyToBeAdded = itemQty;
                         itemQty = 0;
@@ -227,8 +227,8 @@ int main() {
                             if (playerInventory.getItemIdAtIndex(indexSrc) != playerInventory.getItemIdAtIndex(indexDest)) { // Jika item berbeda
                                 cout << "Item berbeda tidak dapat ditumpuk!" << endl;
                             } else {
-                                int totalQtyDest = (itemQty+itemQtyDest) > 64 ? 64 : itemQty+itemQtyDest;
-                                int totalQtySrc = (itemQty+itemQtyDest) > 64 ? totalQtyDest-64 : 0;
+                                int totalQtyDest = (itemQty+itemQtyDest) > MAX_CAP ? MAX_CAP : itemQty+itemQtyDest;
+                                int totalQtySrc = (itemQty+itemQtyDest) > MAX_CAP ? totalQtyDest-MAX_CAP : 0;
                                 playerInventory.setQuantityAtIndex(indexDest, totalQtyDest);
                                 playerInventory.setQuantityAtIndex(indexSrc, totalQtySrc);
                                 if (playerInventory.getQuantityAtIndex(indexSrc) == 0) { // Jika kosong setelah pemindahan
@@ -246,6 +246,22 @@ int main() {
                 // TODO
             } else {
                 cout << "Id slot tidak valid!" << endl;
+            }
+        } else if (command == "EXPORT") {
+            string filePath;
+            int idItem, quantity;
+            cin >> filePath;
+            ofstream itemConfigFileOut(filePath);
+            for (int i=0; i<MAX_SLOT; i++) {
+                // Perlu dipisah Tool dan NonTool
+                // Tool yang dicatat durability, NonTool yang dicatat quantity
+                idItem = playerInventory.getItemIdAtIndex(i);
+                quantity = playerInventory.getQuantityAtIndex(i);
+                string outText = to_string(idItem) + ':' + to_string(quantity);
+                itemConfigFileOut << outText;
+                if (i != MAX_SLOT-1) {
+                    itemConfigFileOut << endl;
+                }
             }
         } else {
             playerInventory.print();
