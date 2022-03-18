@@ -25,6 +25,7 @@ public:
     void addQuantityAtIndex(int index, int quantity);
     void setQuantityAtIndex(int index, int quantity);
     int getQuantityAtIndex(int index);
+    int getItemIdAtIndex(int index);
     string getItemNameAtIndex(int index);
     Item* getPtrItemAtIndex(int index);
     void setPtrItemAtIndex(int index, Item* ptr);

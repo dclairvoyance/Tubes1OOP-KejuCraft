@@ -30,10 +30,6 @@ Inventory& Inventory::operator=(const Inventory& other) {
     return *this;
 }
 
-SlotInventory* Inventory::getSlots() {
-    return this->slots;
-}
-
 int Inventory::countSlotEmpty() {
     int count = 0;
     for (int i=0; i<27; i++) {
@@ -71,8 +67,8 @@ int Inventory::findIndexBySlotId(string id) {
     return -1;
 }
 
-void Inventory::setPtrItemAtIndex(int index, Item* ptr) {
-    this->getSlots()[index].setPointerItem(ptr);
+int Inventory::getItemIdAtIndex(int index) {
+    return this->getPtrItemAtIndex(index)->getId();
 }
 
 int Inventory::getQuantityAtIndex(int index) {
@@ -109,7 +105,12 @@ SlotInventory* Inventory::getSlots() {
 
 void Inventory::print() {
     for (int i=0; i<27; i++) {
-        cout << "[" << this->slots[i].getId() << " " << this->slots[i].getQuantity() << "] ";
+        cout << "[" << this->slots[i].getId() << " ";
+        if (this->getPtrItemAtIndex(i) != NULL) {
+            cout << this->getItemIdAtIndex(i) << " ";
+        } 
+        cout << this->slots[i].getQuantity() << "] ";
+
         if (i%9 == 8) {
             cout << endl;
         } 
