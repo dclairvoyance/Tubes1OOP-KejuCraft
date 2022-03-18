@@ -58,16 +58,42 @@ int Inventory::findIndexItem(Item* ptr) {
     return -1;
 }
 
+int Inventory::findIndexBySlotId(string id) {
+    for (int i=0; i<27; i++) {
+        if (this->slot[i].getId() == id) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+
 int Inventory::getQuantityAtIndex(int index) {
     return this->slot[index].getQuantity();
 }
 
+string Inventory::getItemNameAtIndex(int index) {
+    return this->getPtrItemAtIndex(index)->getName();
+}
+
+Item* Inventory::getPtrItemAtIndex(int index) {
+    return this->slot[index].getPointerItem();
+}
+
 void Inventory::addQuantityAtIndex(int index, int quantity) {
-    this->getSlots()[index].addQuantity(quantity);
+    this->slot[index].addQuantity(quantity);
+}
+
+void Inventory::setQuantityAtIndex(int index, int quantity) {
+    this->slot[index].setQuantity(quantity);
 }
 
 void Inventory::setPtrItemAtIndex(int index, Item* ptr) {
-    this->getSlots()[index].setPointerItem(ptr);
+    this->slot[index].setPointerItem(ptr);
+}
+
+bool Inventory::isSlotEmptyAtIndex(int index) {
+    return this->slot[index].getPointerItem() == NULL;
 }
 
 SlotInventory* Inventory::getSlots() {

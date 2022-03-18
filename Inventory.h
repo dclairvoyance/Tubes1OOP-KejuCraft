@@ -23,9 +23,14 @@ public:
     int findIndexEmpty();
     int countSlotEmpty();
     void addQuantityAtIndex(int index, int quantity);
+    void setQuantityAtIndex(int index, int quantity);
     int getQuantityAtIndex(int index);
+    string getItemNameAtIndex(int index);
+    Item* getPtrItemAtIndex(int index);
     void setPtrItemAtIndex(int index, Item* ptr);
     int findIndexItem(Item* ptr);
+    int findIndexBySlotId(string id);
+    bool isSlotEmptyAtIndex(int index);
     void print();
 };
 
