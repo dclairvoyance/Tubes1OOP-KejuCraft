@@ -12,21 +12,21 @@
 
 class Inventory {
 private:
-    SlotInventory* slot;
+    SlotInventory* slots;   /* array of SlotInventory */
 public:
-    Inventory();
-    Inventory(const Inventory& other);
-    ~Inventory();
-    Inventory& operator=(const Inventory& other);
-    SlotInventory* getSlots();
-    void setSlot(int index, SlotInventory Slot);
-    int findIndexEmpty();
-    int countSlotEmpty();
-    void addQuantityAtIndex(int index, int quantity);
-    int getQuantityAtIndex(int index);
-    void setPtrItemAtIndex(int index, Item* ptr);
-    int findIndexItem(Item* ptr);
-    void print();
+    Inventory();                                        /* default constructor */
+    Inventory(const Inventory& other);                  /* copy constructor */
+    ~Inventory();                                       /* destructor */
+    Inventory& operator=(const Inventory& other);       /* assignment operator overloading */
+    SlotInventory* getSlots();                          /* get slots attribute (array of SlotInventory) */
+    // void setSlot(int index, SlotInventory slot);
+    int countSlotEmpty();                               /* count empty slot in array */
+    int findIndexEmpty();                               /* find index of first empty slot in array */
+    int findIndexItem(Item* ptr);                       /* find index of first ptr in array */
+    void setPtrItemAtIndex(int index, Item* ptr);       /* set ptr item into slots[index] */
+    int getQuantityAtIndex(int index);                  /* get quantity of item in slots[index] */
+    void addQuantityAtIndex(int index, int quantity);   /* add quantity of item in slots[index] */
+    void print();                                       /* print info */
 };
 
 #endif
