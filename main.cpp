@@ -85,12 +85,9 @@ int main() {
         stringstream ss(intext);
         string name, type, isTool;
         int id;
-        ss >> id;
-        ss >> name;
-        ss >> type;
-        ss >> isTool;
+        ss >> id >> name >> type >> isTool;
         if (isTool == "TOOL") {
-            Tool item(id, name, type, 0, 10);
+            Tool item(id, name, type, 0, 10); // Durability awal = 10
             toolContainer.insert(pair<string, Tool> (item.getName(), item));
         } else {
             NonTool item(id, name, type, 0);
@@ -181,6 +178,70 @@ int main() {
                 if (itemQty > 0) {
                     cout << "Inventory penuh!" << endl;
                 }
+            }
+        } else if (command == "DISCARD") {
+            string inventorySlotId;
+            int itemQty;
+            cin >> inventorySlotId >> itemQty;
+            int index = playerInventory.findIndexBySlotId(inventorySlotId);
+            string itemName = playerInventory.getItemNameAtIndex(index);
+            itrTool = toolContainer.find(itemName);
+            itrNonTool = nonToolContainer.find(itemName);
+            if (playerInventory.getQuantityAtIndex(index) < itemQty) {
+                cout << "Item tidak mencukupi" << endl;
+            } else { // Jika item cukup untuk dihapus
+                playerInventory.addQuantityAtIndex(index, -itemQty); // Mengurangi item di slot
+                if (playerInventory.getQuantityAtIndex(index) == 0) { // Jika habis, hapus pointer item
+                    playerInventory.setPtrItemAtIndex(index, NULL);
+                }
+                // Mengurangi quantity di container
+                if (itrTool != toolContainer.end()) {
+                    itrTool->second.addQuantity(-itemQty);
+                } else {
+                    itrNonTool->second.addQuantity(-itemQty);
+                }
+            }
+        } else if (command == "MOVE") {
+            string slotIdSrc;
+            int itemQty;
+            string slotIdDest;
+            cin >> slotIdSrc >> itemQty >> slotIdDest;
+            if (slotIdSrc[0] == 'I') { // Jika sumbernya dari slotInventory
+                if (slotIdDest[0] == 'I') { // Jika tujuannya ke slotInventory
+                    int indexSrc = playerInventory.findIndexBySlotId(slotIdSrc);
+                    int indexDest = playerInventory.findIndexBySlotId(slotIdDest);
+                    itemQty = playerInventory.getQuantityAtIndex(indexSrc);
+                    int itemQtyDest = playerInventory.getQuantityAtIndex(indexDest);
+                    if (itemQtyDest == 0) { // Jika ingin dipindahkan ke slot kosong
+                        playerInventory.setQuantityAtIndex(indexDest, itemQty);
+                        playerInventory.setPtrItemAtIndex(indexDest, playerInventory.getPtrItemAtIndex(indexSrc));
+                        playerInventory.setQuantityAtIndex(indexSrc, 0);
+                        playerInventory.setPtrItemAtIndex(indexSrc, NULL);
+                    } else {
+                        string itemNameDest = playerInventory.getItemNameAtIndex(indexDest);
+                        itrTool = toolContainer.find(itemNameDest);
+                        itrNonTool = nonToolContainer.find(itemNameDest);
+                        if (itrTool != toolContainer.end()) {
+                            cout << "Item Tool tidak dapat ditumpuk!" << endl;
+                        } else {
+                            int totalQtyDest = (itemQty+itemQtyDest) > 64 ? 64 : itemQty+itemQtyDest;
+                            int totalQtySrc = (itemQty+itemQtyDest) > 64 ? totalQtyDest-64 : 0;
+                            playerInventory.setQuantityAtIndex(indexDest, totalQtyDest);
+                            playerInventory.setQuantityAtIndex(indexSrc, totalQtySrc);
+                            if (playerInventory.getQuantityAtIndex(indexSrc) == 0) { // Jika kosong setelah pemindahan
+                                playerInventory.setPtrItemAtIndex(indexSrc, NULL);
+                            }
+                        }
+                    }
+                } else if (slotIdDest[0] == 'C') { // Jika tujuannya ke slotCrafting
+                    // TODO
+                } else {
+                    cout << "Id slot tidak valid!" << endl;
+                }
+            } else if (slotIdSrc[0] == 'C') { // Jika sumbernya dari slotCrafting
+                // TODO
+            } else {
+                cout << "Id slot tidak valid!" << endl;
             }
         } else {
             playerInventory.print();
