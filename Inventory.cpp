@@ -5,15 +5,15 @@
 #include "Inventory.h"
 
 Inventory::Inventory() {
-    this->slots = new SlotInventory[27];
-    for (int i=0; i<27; i++) {
+    this->slots = new SlotInventory[MAX_SLOT];
+    for (int i=0; i<MAX_SLOT; i++) {
         string id = "I" + to_string(i);
         this->slots[i].setId(id);
     }
 }
 
 Inventory::Inventory(const Inventory& other) {
-    for (int i=0; i<27; i++) {
+    for (int i=0; i<MAX_SLOT; i++) {
         this->slots[i] = other.slots[i];
     }
 }
@@ -24,7 +24,7 @@ Inventory::~Inventory() {
 
 Inventory& Inventory::operator=(const Inventory& other) {
     delete[] this->slots;
-    for (int i=0; i<27; i++) {
+    for (int i=0; i<MAX_SLOT; i++) {
         this->slots[i] = other.slots[i];
     }
     return *this;
@@ -32,7 +32,7 @@ Inventory& Inventory::operator=(const Inventory& other) {
 
 int Inventory::countSlotEmpty() {
     int count = 0;
-    for (int i=0; i<27; i++) {
+    for (int i=0; i<MAX_SLOT; i++) {
         if (this->slots[i].getPointerItem() == NULL) {
             count++;
         }
@@ -41,7 +41,7 @@ int Inventory::countSlotEmpty() {
 }
 
 int Inventory::findIndexEmpty() {
-    for (int i=0; i<27; i++) {
+    for (int i=0; i<MAX_SLOT; i++) {
         if (this->slots[i].getPointerItem() == NULL) {
             return i;
         }
@@ -50,7 +50,7 @@ int Inventory::findIndexEmpty() {
 }
 
 int Inventory::findIndexItem(Item* ptr) {
-    for (int i=0; i<27; i++) {
+    for (int i=0; i<MAX_SLOT; i++) {
         if (this->slots[i].getPointerItem() == ptr && this->slots[i].getQuantity() < 64) {
             return i;
         }
@@ -68,6 +68,9 @@ int Inventory::findIndexBySlotId(string id) {
 }
 
 int Inventory::getItemIdAtIndex(int index) {
+    if (this->getPtrItemAtIndex(index) == NULL) {
+        return 0;
+    }
     return this->getPtrItemAtIndex(index)->getId();
 }
 
@@ -76,6 +79,9 @@ int Inventory::getQuantityAtIndex(int index) {
 }
 
 string Inventory::getItemNameAtIndex(int index) {
+    if (this->getPtrItemAtIndex(index) == NULL) {
+        return "null";
+    }
     return this->getPtrItemAtIndex(index)->getName();
 }
 

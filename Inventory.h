@@ -4,10 +4,8 @@
 #ifndef _INVENTORY_H_
 #define _INVENTORY_H_
 
-#define MAX_ROW 3
-#define MAX_COL 9
+#define MAX_SLOT 27
 #include <iostream>
-#include <map>
 #include "Slot.h"
 
 class Inventory {
@@ -19,13 +17,13 @@ public:
     ~Inventory();                                       /* destructor */
     Inventory& operator=(const Inventory& other);       /* assignment operator overloading */
     SlotInventory* getSlots();                          /* get slots attribute (array of SlotInventory) */
-    // void setSlot(int index, SlotInventory Slot);
     int findIndexEmpty();
     int countSlotEmpty();
     void addQuantityAtIndex(int index, int quantity);
     void setQuantityAtIndex(int index, int quantity);
     int getQuantityAtIndex(int index);
     int getItemIdAtIndex(int index);
+    int getItemDurabilityAtIndex(int index);
     string getItemNameAtIndex(int index);
     Item* getPtrItemAtIndex(int index);
     void setPtrItemAtIndex(int index, Item* ptr);
