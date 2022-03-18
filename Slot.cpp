@@ -22,12 +22,12 @@ string Slot::getId() {
     return this->id;
 }
 
-Item* Slot::getPointerItem() {
-    return this->ptrItem;
-}
-
 void Slot::setPointerItem(Item* ptr) {
     this->ptrItem = ptr;
+}
+
+Item* Slot::getPointerItem() {
+    return this->ptrItem;
 }
 
 SlotInventory::SlotInventory() : Slot() {
@@ -52,12 +52,12 @@ SlotInventory& SlotInventory::operator=(const SlotInventory& other) {
     return *this;
 }
 
-int SlotInventory::getQuantity() {
-    return this->quantity;
-}
-
 void SlotInventory::setQuantity(int quantity) {
     this->quantity = quantity;
+}
+
+int SlotInventory::getQuantity() {
+    return this->quantity;
 }
 
 void SlotInventory::addQuantity(int quantity) {
@@ -68,4 +68,4 @@ void SlotInventory::addItemTo(SlotInventory& other) {
     int total = this->quantity + other.quantity;
     other.quantity = total>64 ? 64 : total;
     this->quantity = total - other.quantity;
-} // Memindahkan item ke slot lain
+}

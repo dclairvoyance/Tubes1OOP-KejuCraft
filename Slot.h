@@ -10,29 +10,29 @@
 
 class Slot {
 protected:
-    string id;
-    Item* ptrItem;
+    string id;      /* I0, I1, ... */
+    Item* ptrItem;  /* pointer to Item */
 public:
-    Slot();
-    Slot(string id, Item* item);
-    void setId(string id);
-    Item* getPointerItem();
-    void setPointerItem(Item* ptr);
-    string getId();
+    Slot();                             /* default constructor */
+    Slot(string id, Item* item);        /* user-defined constructor */
+    void setId(string id);              /* set id attribute of slot */
+    string getId();                     /* get id attribute of slot */
+    void setPointerItem(Item* ptr);     /* set item pointed by slot */
+    Item* getPointerItem();             /* get item pointed by slot */
 };
 
 class SlotInventory : public Slot {
 private:
-    int quantity;
+    int quantity;   /* quantity of item in slot */
 public:
-    SlotInventory();
-    SlotInventory(string id, Item* item, int quantity);
-    ~SlotInventory();
-    SlotInventory& operator=(const SlotInventory& other);
-    int getQuantity();
-    void setQuantity(int quantity);
-    void addQuantity(int quantity);
-    void addItemTo(SlotInventory& other); // Memindahkan item ke slot lain
+    SlotInventory();                                        /* default constructor */
+    SlotInventory(string id, Item* item, int quantity);     /* user-defined constructor */
+    virtual ~SlotInventory();                               /* destructor */
+    SlotInventory& operator=(const SlotInventory& other);   /* assignment operator overloading */
+    void setQuantity(int quantity);                         /* set quantity of item in slot */
+    int getQuantity();                                      /* get quantity of item in slot */
+    void addQuantity(int quantity);                         /* add quantity of item in slot (used in give) */
+    void addItemTo(SlotInventory& other);                   /* move from *this* to other slot */
 };
 
 class SlotCrafting : public Slot {
