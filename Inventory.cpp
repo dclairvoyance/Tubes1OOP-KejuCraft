@@ -5,35 +5,39 @@
 #include "Inventory.h"
 
 Inventory::Inventory() {
-    this->slot = new SlotInventory[27];
+    this->slots = new SlotInventory[27];
     for (int i=0; i<27; i++) {
         string id = "I" + to_string(i);
-        this->slot[i].setId(id);
+        this->slots[i].setId(id);
     }
-}
-
-Inventory::~Inventory() {
-    delete[] this->slot;
 }
 
 Inventory::Inventory(const Inventory& other) {
     for (int i=0; i<27; i++) {
-        this->slot[i] = other.slot[i];
+        this->slots[i] = other.slots[i];
     }
 }
 
+Inventory::~Inventory() {
+    delete[] this->slots;
+}
+
 Inventory& Inventory::operator=(const Inventory& other) {
-    delete[] this->slot;
+    delete[] this->slots;
     for (int i=0; i<27; i++) {
-        this->slot[i] = other.slot[i];
+        this->slots[i] = other.slots[i];
     }
     return *this;
+}
+
+SlotInventory* Inventory::getSlots() {
+    return this->slots;
 }
 
 int Inventory::countSlotEmpty() {
     int count = 0;
     for (int i=0; i<27; i++) {
-        if (this->slot[i].getPointerItem() == NULL) {
+        if (this->slots[i].getPointerItem() == NULL) {
             count++;
         }
     }
@@ -42,7 +46,7 @@ int Inventory::countSlotEmpty() {
 
 int Inventory::findIndexEmpty() {
     for (int i=0; i<27; i++) {
-        if (this->slot[i].getPointerItem() == NULL) {
+        if (this->slots[i].getPointerItem() == NULL) {
             return i;
         }
     }
@@ -51,7 +55,7 @@ int Inventory::findIndexEmpty() {
 
 int Inventory::findIndexItem(Item* ptr) {
     for (int i=0; i<27; i++) {
-        if (this->slot[i].getPointerItem() == ptr && this->slot[i].getQuantity() < 64) {
+        if (this->slots[i].getPointerItem() == ptr && this->slots[i].getQuantity() < 64) {
             return i;
         }
     }
@@ -60,16 +64,19 @@ int Inventory::findIndexItem(Item* ptr) {
 
 int Inventory::findIndexBySlotId(string id) {
     for (int i=0; i<27; i++) {
-        if (this->slot[i].getId() == id) {
+        if (this->slots[i].getId() == id) {
             return i;
         }
     }
     return -1;
 }
 
+void Inventory::setPtrItemAtIndex(int index, Item* ptr) {
+    this->getSlots()[index].setPointerItem(ptr);
+}
 
 int Inventory::getQuantityAtIndex(int index) {
-    return this->slot[index].getQuantity();
+    return this->slots[index].getQuantity();
 }
 
 string Inventory::getItemNameAtIndex(int index) {
@@ -77,32 +84,32 @@ string Inventory::getItemNameAtIndex(int index) {
 }
 
 Item* Inventory::getPtrItemAtIndex(int index) {
-    return this->slot[index].getPointerItem();
+    return this->slots[index].getPointerItem();
 }
 
 void Inventory::addQuantityAtIndex(int index, int quantity) {
-    this->slot[index].addQuantity(quantity);
+    this->slots[index].addQuantity(quantity);
 }
 
 void Inventory::setQuantityAtIndex(int index, int quantity) {
-    this->slot[index].setQuantity(quantity);
+    this->slots[index].setQuantity(quantity);
 }
 
 void Inventory::setPtrItemAtIndex(int index, Item* ptr) {
-    this->slot[index].setPointerItem(ptr);
+    this->slots[index].setPointerItem(ptr);
 }
 
 bool Inventory::isSlotEmptyAtIndex(int index) {
-    return this->slot[index].getPointerItem() == NULL;
+    return this->slots[index].getPointerItem() == NULL;
 }
 
 SlotInventory* Inventory::getSlots() {
-    return this->slot;
+    return this->slots;
 }
 
 void Inventory::print() {
     for (int i=0; i<27; i++) {
-        cout << "[" << this->slot[i].getId() << " " << this->slot[i].getQuantity() << "] ";
+        cout << "[" << this->slots[i].getId() << " " << this->slots[i].getQuantity() << "] ";
         if (i%9 == 8) {
             cout << endl;
         } 

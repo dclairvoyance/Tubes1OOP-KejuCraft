@@ -12,7 +12,7 @@
 
 class Inventory {
 private:
-    SlotInventory* slot;
+    SlotInventory* slots;   /* array of SlotInventory */
 public:
     Inventory();
     Inventory(const Inventory& other);
