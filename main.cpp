@@ -221,15 +221,19 @@ int main() {
                         string itemNameDest = playerInventory.getItemNameAtIndex(indexDest);
                         itrTool = toolContainer.find(itemNameDest);
                         itrNonTool = nonToolContainer.find(itemNameDest);
-                        if (itrTool != toolContainer.end()) {
+                        if (itrTool != toolContainer.end()) { // Jika item Tool yang akan ditumpuk
                             cout << "Item Tool tidak dapat ditumpuk!" << endl;
-                        } else {
-                            int totalQtyDest = (itemQty+itemQtyDest) > 64 ? 64 : itemQty+itemQtyDest;
-                            int totalQtySrc = (itemQty+itemQtyDest) > 64 ? totalQtyDest-64 : 0;
-                            playerInventory.setQuantityAtIndex(indexDest, totalQtyDest);
-                            playerInventory.setQuantityAtIndex(indexSrc, totalQtySrc);
-                            if (playerInventory.getQuantityAtIndex(indexSrc) == 0) { // Jika kosong setelah pemindahan
-                                playerInventory.setPtrItemAtIndex(indexSrc, NULL);
+                        } else { // Jika item NonTool yang akan ditumpuk
+                            if (playerInventory.getItemIdAtIndex(indexSrc) != playerInventory.getItemIdAtIndex(indexDest)) { // Jika item berbeda
+                                cout << "Item berbeda tidak dapat ditumpuk!" << endl;
+                            } else {
+                                int totalQtyDest = (itemQty+itemQtyDest) > 64 ? 64 : itemQty+itemQtyDest;
+                                int totalQtySrc = (itemQty+itemQtyDest) > 64 ? totalQtyDest-64 : 0;
+                                playerInventory.setQuantityAtIndex(indexDest, totalQtyDest);
+                                playerInventory.setQuantityAtIndex(indexSrc, totalQtySrc);
+                                if (playerInventory.getQuantityAtIndex(indexSrc) == 0) { // Jika kosong setelah pemindahan
+                                    playerInventory.setPtrItemAtIndex(indexSrc, NULL);
+                                }
                             }
                         }
                     }
