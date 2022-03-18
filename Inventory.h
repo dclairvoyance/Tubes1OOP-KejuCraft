@@ -14,12 +14,12 @@ class Inventory {
 private:
     SlotInventory* slots;   /* array of SlotInventory */
 public:
-    Inventory();
-    Inventory(const Inventory& other);
-    ~Inventory();
-    Inventory& operator=(const Inventory& other);
-    SlotInventory* getSlots();
-    void setSlot(int index, SlotInventory Slot);
+    Inventory();                                        /* default constructor */
+    Inventory(const Inventory& other);                  /* copy constructor */
+    ~Inventory();                                       /* destructor */
+    Inventory& operator=(const Inventory& other);       /* assignment operator overloading */
+    SlotInventory* getSlots();                          /* get slots attribute (array of SlotInventory) */
+    // void setSlot(int index, SlotInventory Slot);
     int findIndexEmpty();
     int countSlotEmpty();
     void addQuantityAtIndex(int index, int quantity);

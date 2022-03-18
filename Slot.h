@@ -37,9 +37,9 @@ public:
 
 class SlotCrafting : public Slot {
 private:
+    /* sementara ikut inventory */
 public:
-    SlotCrafting();
-    void put(); // Menaruh item pada suatu slot
+    /* sementara ikut inventory */
 };
 
 #endif
