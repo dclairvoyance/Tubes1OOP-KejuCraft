@@ -87,7 +87,7 @@ int main() {
         int id;
         ss >> id >> name >> type >> isTool;
         if (isTool == "TOOL") {
-            Tool item(id, name, type, 0, 10); // Durability awal = 10
+            Tool item(id, name, type, 0); // Durability awal = 10
             toolContainer.insert(pair<string, Tool> (item.getName(), item));
         } else {
             NonTool item(id, name, type, 0);
@@ -125,23 +125,51 @@ int main() {
 
     string command;
     while (cin >> command) {
-        if (command == "GIVE") {
+        if (command == "SHOW") {
+            for (int i=0; i<MAX_SLOT; i++) {
+                // print inventory
+                cout << "[" << playerInventory.getSlotIdAtIndex(i) << " ";
+                if (playerInventory.getPtrItemAtIndex(i) != NULL) {
+                    cout << playerInventory.getItemIdAtIndex(i) << " ";
+                    string itemName = playerInventory.getItemNameAtIndex(i);
+                    string slotId = playerInventory.getSlotIdAtIndex(i);
+                    int pos = playerInventory.findPosForMOVE(itemName, slotId);
+                    itrTool = toolContainer.find(itemName);
+                    itrNonTool = nonToolContainer.find(itemName);
+                    if (itrTool != toolContainer.end()) { // Jika tool, cetak durability
+                        cout << itrTool->second.getDurabilityAtPos(pos);
+                    } else { // Jika nontool, cetak quantity
+                        cout << playerInventory.getQuantityAtIndex(i);
+                    }
+                } else {
+                    cout << playerInventory.getQuantityAtIndex(i);
+                }
+                cout << "] ";
+
+                if (i%9 == 8) {
+                    cout << endl;
+                }
+            }
+        } else if (command == "GIVE") {
             string itemName;
             int itemQty;
             cin >> itemName >> itemQty;
             itrTool = toolContainer.find(itemName);
             itrNonTool = nonToolContainer.find(itemName);
             if (itrTool != toolContainer.end()) { // Jika tipe item Tool
-                int countEmpty = playerInventory.countSlotEmpty();
-                if (countEmpty < itemQty) {
+                int index = playerInventory.findIndexEmpty();
+                int pos = playerInventory.findPosForGIVE(itemName);
+                while (itemQty > 0 && index != -1) {
+                    itemQty--;
+                    playerInventory.addQuantityAtIndex(index, 1); // Menambah quantity di slot
+                    playerInventory.setPtrItemAtIndex(index, &itrTool->second); // Menunjuk ke alamat item di container
+                    itrTool->second.addQuantity(1); // Menambah quantity item di container
+                    itrTool->second.insertDurabilityAtPos(pos, 10); // Durability awal = 10;
+                    index = playerInventory.findIndexEmpty();
+                }
+                // Jika tidak ada slot kosong tersisa 
+                if (itemQty > 0) {
                     cout << "Inventory penuh!" << endl;
-                } else {
-                    itrTool->second.addQuantity(itemQty); // Menambah quantity item di container
-                    for (int i=0; i<itemQty; i++) {
-                        int index = playerInventory.findIndexEmpty();
-                        playerInventory.addQuantityAtIndex(index, 1); // Menambah quantity di slot
-                        playerInventory.setPtrItemAtIndex(index, &itrTool->second); // Menunjuk ke alamat item di container
-                    }
                 }
             } else { // Jika tipe item NonTool
                 // Temukan semua slot yang berisi item ini
@@ -173,6 +201,7 @@ int main() {
                     playerInventory.addQuantityAtIndex(index, QtyToBeAdded);
                     playerInventory.setPtrItemAtIndex(index, &itrNonTool->second);
                     itrNonTool->second.addQuantity(QtyToBeAdded);
+                    index = playerInventory.findIndexEmpty();
                 }
                 // Jika sudah tidak ada slot kosong
                 if (itemQty > 0) {
@@ -190,15 +219,18 @@ int main() {
             if (playerInventory.getQuantityAtIndex(index) < itemQty) {
                 cout << "Item tidak mencukupi" << endl;
             } else { // Jika item cukup untuk dihapus
-                playerInventory.addQuantityAtIndex(index, -itemQty); // Mengurangi item di slot
-                if (playerInventory.getQuantityAtIndex(index) == 0) { // Jika habis, hapus pointer item
-                    playerInventory.setPtrItemAtIndex(index, NULL);
-                }
                 // Mengurangi quantity di container
                 if (itrTool != toolContainer.end()) {
                     itrTool->second.addQuantity(-itemQty);
+                    int pos = playerInventory.findPosForMOVE(itemName, inventorySlotId);
+                    itrTool->second.removeDurabilityAtPos(pos); // Menghapus durability
                 } else {
                     itrNonTool->second.addQuantity(-itemQty);
+                }
+                // Mengurangi item di slot
+                playerInventory.addQuantityAtIndex(index, -itemQty);
+                if (playerInventory.getQuantityAtIndex(index) == 0) { // Jika habis, hapus pointer item
+                    playerInventory.setPtrItemAtIndex(index, NULL);
                 }
             }
         } else if (command == "MOVE") {
@@ -213,6 +245,16 @@ int main() {
                     itemQty = playerInventory.getQuantityAtIndex(indexSrc);
                     int itemQtyDest = playerInventory.getQuantityAtIndex(indexDest);
                     if (itemQtyDest == 0) { // Jika ingin dipindahkan ke slot kosong
+                        string itemNameSrc = playerInventory.getItemNameAtIndex(indexSrc);
+                        itrTool = toolContainer.find(itemNameSrc);
+                        itrNonTool = nonToolContainer.find(itemNameSrc);
+                        if (itrTool != toolContainer.end()) {
+                            int posBeforeMove = playerInventory.findPosForMOVE(itemNameSrc, slotIdSrc);
+                            int posAfterMove = playerInventory.findPosForMOVE(itemNameSrc, slotIdDest) - 1;
+                            int durability = itrTool->second.getDurabilityAtPos(posBeforeMove);
+                            itrTool->second.removeDurabilityAtPos(posBeforeMove);
+                            itrTool->second.insertDurabilityAtPos(posAfterMove, durability);
+                        }
                         playerInventory.setQuantityAtIndex(indexDest, itemQty);
                         playerInventory.setPtrItemAtIndex(indexDest, playerInventory.getPtrItemAtIndex(indexSrc));
                         playerInventory.setQuantityAtIndex(indexSrc, 0);
@@ -247,24 +289,52 @@ int main() {
             } else {
                 cout << "Id slot tidak valid!" << endl;
             }
+        } else if (command == "USE") {
+            string inventorySlotId;
+            cin >> inventorySlotId;
+            int index = playerInventory.findIndexBySlotId(inventorySlotId);
+            string itemName = playerInventory.getItemNameAtIndex(index);
+            itrTool = toolContainer.find(itemName);
+            itrNonTool = nonToolContainer.find(itemName);
+            if (itrTool != toolContainer.end()) {
+                int pos = playerInventory.findPosForMOVE(itemName, inventorySlotId);
+                itrTool->second.decrementDurabilityAtPos(pos);
+                if (itrTool->second.getDurabilityAtPos(pos) == 0) { // Jika durability habis
+                    itrTool->second.removeDurabilityAtPos(pos);
+                    itrTool->second.addQuantity(-1); // kurangi quantity di container
+                    playerInventory.addQuantityAtIndex(index, -1); // kurangi quantity di slot
+                }
+            } else {
+                cout << "Item NonTool tidak dapat digunakan!" << endl;
+            }
         } else if (command == "EXPORT") {
-            string filePath;
-            int idItem, quantity;
+            string filePath, itemName, outText;
+            int idItem, quantity, durability;
             cin >> filePath;
             ofstream itemConfigFileOut(filePath);
             for (int i=0; i<MAX_SLOT; i++) {
                 // Perlu dipisah Tool dan NonTool
                 // Tool yang dicatat durability, NonTool yang dicatat quantity
+                itemName = playerInventory.getItemNameAtIndex(i);
                 idItem = playerInventory.getItemIdAtIndex(i);
-                quantity = playerInventory.getQuantityAtIndex(i);
-                string outText = to_string(idItem) + ':' + to_string(quantity);
+                itrTool = toolContainer.find(itemName);
+                itrNonTool = nonToolContainer.find(itemName);
+                if (itrTool != toolContainer.end()) {
+                    string slotId = playerInventory.getSlotIdAtIndex(i);
+                    int pos = playerInventory.findPosForMOVE(itemName, slotId);
+                    durability = itrTool->second.getDurabilityAtPos(pos);
+                    outText = to_string(idItem) + ':' + to_string(durability);
+                } else {
+                    quantity = playerInventory.getQuantityAtIndex(i);
+                    outText = to_string(idItem) + ':' + to_string(quantity);
+                }
                 itemConfigFileOut << outText;
                 if (i != MAX_SLOT-1) {
                     itemConfigFileOut << endl;
                 }
             }
         } else {
-            playerInventory.print();
+            cout << "Invalid command" << endl;
         }
     }
 
