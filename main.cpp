@@ -171,7 +171,7 @@ int main() {
                 if (itemQty > 0) {
                     cout << "Inventory penuh!" << endl;
                 }
-            } else { // Jika tipe item NonTool
+            } else if ( itrNonTool != nonToolContainer.end() ) { // Jika tipe item NonTool
                 // Temukan semua slot yang berisi item ini
                 int index = playerInventory.findIndexItem(&itrNonTool->second);
                 while (itemQty > 0 && index != -1) {
@@ -207,6 +207,8 @@ int main() {
                 if (itemQty > 0) {
                     cout << "Inventory penuh!" << endl;
                 }
+            } else { // Jika tidak ditemukan diantara keduanya
+                cout << "Tidak ditemukan nama tersebut sehingga tidak dapat menambahkan item ke inventory" << endl;
             }
         } else if (command == "DISCARD") {
             string inventorySlotId;
