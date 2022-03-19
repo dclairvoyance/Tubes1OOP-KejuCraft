@@ -59,12 +59,37 @@ int Inventory::findIndexItem(Item* ptr) {
 }
 
 int Inventory::findIndexBySlotId(string id) {
-    for (int i=0; i<27; i++) {
+    for (int i=0; i<MAX_SLOT; i++) {
         if (this->slots[i].getId() == id) {
             return i;
         }
     }
     return -1;
+}
+
+int Inventory::findPosForGIVE(string itemName) {
+    int count = 0;
+    for (int i=0; i<MAX_SLOT; i++) {
+        if (this->getPtrItemAtIndex(i) == NULL) {
+            count++;
+            return count;
+        } else if (this->getItemNameAtIndex(i) == itemName) {
+            count++;
+        }
+    }
+    return -1;
+}
+
+int Inventory::findPosForMOVE(string itemName, string slotId) {
+    int count = 0;
+    int index = 0;
+    while (this->slots[index].getId() != slotId) {
+        if (this->getItemNameAtIndex(index) == itemName) {
+            count++;
+        }
+        index++;
+    }
+    return count+1;
 }
 
 int Inventory::getItemIdAtIndex(int index) {
@@ -89,6 +114,10 @@ Item* Inventory::getPtrItemAtIndex(int index) {
     return this->slots[index].getPointerItem();
 }
 
+string Inventory::getSlotIdAtIndex(int index) {
+    return this->slots[index].getId();
+}
+
 void Inventory::addQuantityAtIndex(int index, int quantity) {
     this->slots[index].addQuantity(quantity);
 }
@@ -110,7 +139,7 @@ SlotInventory* Inventory::getSlots() {
 }
 
 void Inventory::print() {
-    for (int i=0; i<27; i++) {
+    for (int i=0; i<MAX_SLOT; i++) {
         cout << "[" << this->slots[i].getId() << " ";
         if (this->getPtrItemAtIndex(i) != NULL) {
             cout << this->getItemIdAtIndex(i) << " ";

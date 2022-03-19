@@ -23,12 +23,14 @@ public:
     void setQuantityAtIndex(int index, int quantity);
     int getQuantityAtIndex(int index);
     int getItemIdAtIndex(int index);
-    int getItemDurabilityAtIndex(int index);
     string getItemNameAtIndex(int index);
     Item* getPtrItemAtIndex(int index);
+    string getSlotIdAtIndex(int index);
     void setPtrItemAtIndex(int index, Item* ptr);
     int findIndexItem(Item* ptr);
     int findIndexBySlotId(string id);
+    int findPosForGIVE(string itemName);
+    int findPosForMOVE(string itemName, string slotId);
     bool isSlotEmptyAtIndex(int index);
     void print();
 };
