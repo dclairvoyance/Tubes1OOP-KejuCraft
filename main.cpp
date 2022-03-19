@@ -104,7 +104,7 @@ int main() {
     itemConfigFile.close();
     cout << "EOF reached.." << endl;
 
-int recipeCount = 0;
+    int recipeCount = 0;
     for (const auto &entry : filesystem::directory_iterator(configPath + "/recipe")) {
         recipeCount++;
     }
@@ -121,69 +121,34 @@ int recipeCount = 0;
             getline(recipeConfigFile, intext);
             stringstream ss(intext);
             int row, col, quantity;
-            string temp;
-            Item output;
+            string itemCraft;
+            string itemName;
             ss >> row >> col;
-
-            Item** resep = new Item* [row];
+            
+            string** resep = new string* [row];
             for (int i = 0; i<row; i++){
-                resep[i] = new Item[col];
+                resep[i] = new string[col];
             }
 
             for (int i = 0; i<row; i++){
                 getline(recipeConfigFile, intext);
                 stringstream ss2(intext);
                 for (int j = 0; j<col; j++){
-                    
-                    ss2 >> temp;
-
-                    if (temp == "-"){
-                        resep[i][j] = Item();
-                        
-                    }
-                    else {
-                        for (itrNonTool = nonToolContainer.begin(); itrNonTool!=nonToolContainer.end(); itrNonTool++) {
-                            if (itrNonTool->first == temp){
-                                resep[i][j] = itrNonTool->second;
-                                
-                            }
-                        }
-
-                        for (itrNonTool = nonToolContainer.begin(); itrNonTool!=nonToolContainer.end(); itrNonTool++) {
-                            if (itrNonTool->second.getType() == temp){
-                                resep[i][j] = itrNonTool->second;
-                                
-                            }
-                        }
-                    }
-                    
+                    ss2 >> itemCraft;
+                    resep[i][j] = itemCraft;
                 }
             }
 
             getline(recipeConfigFile, intext);
             stringstream ss3(intext);
-
-            string temp2;
-            ss3 >> temp2;
-
-            for (itrNonTool = nonToolContainer.begin(); itrNonTool!=nonToolContainer.end(); itrNonTool++) {
-                if (itrNonTool->first == temp2){
-                    output=itrNonTool->second;
-                }
-            }
-
-            for (itrTool = toolContainer.begin(); itrTool!=toolContainer.end(); itrTool++) {
-                if (itrTool->first == temp2){
-                    output=itrTool->second;
-                }
-            }
-
+            ss3 >> itemName;
             ss3 >> quantity;
-            
-            CraftingRecipe finalresult(row, col, resep, output, quantity);
-            recipeContainer[recipeLocation] = finalresult;
+
+            CraftingRecipe finalrecipe(row,col,resep,itemName,quantity);
+            recipeContainer[recipeLocation] = finalrecipe;
             recipeLocation++;
             isDone = true;
+            
         }
     }
     // Membaca file recipe
@@ -208,9 +173,9 @@ int recipeCount = 0;
     //     cout << endl;
     // }
 
-    // for (int i = 0; i<recipeCount; i++){
-    //     recipeContainer[i].print();
-    // }
+    for (int i = 0; i<recipeCount; i++){
+        recipeContainer[i].print();
+    }
 
     string command;
     while (cin >> command) {
