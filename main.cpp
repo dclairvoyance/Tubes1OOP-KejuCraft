@@ -252,8 +252,7 @@ int main() {
                         itrNonTool = nonToolContainer.find(itemNameSrc);
                         if (itrTool != toolContainer.end()) {
                             int posBeforeMove = playerInventory.findPosForMOVE(itemNameSrc, slotIdSrc);
-                            int quantitySrc = playerInventory.getPtrItemAtIndex(indexSrc)->getQuantity();
-                            int posAfterMove = min(playerInventory.findPosForMOVE(itemNameSrc, slotIdDest), quantitySrc);
+                            int posAfterMove = playerInventory.findPosAfterMOVE(itemNameSrc, slotIdSrc, slotIdDest);
                             int durability = itrTool->second.getDurabilityAtPos(posBeforeMove);
                             itrTool->second.removeDurabilityAtPos(posBeforeMove);
                             itrTool->second.insertDurabilityAtPos(posAfterMove, durability);
@@ -273,7 +272,7 @@ int main() {
                                 cout << "Item berbeda tidak dapat ditumpuk!" << endl;
                             } else {
                                 int totalQtyDest = (itemQty+itemQtyDest) > MAX_CAP ? MAX_CAP : itemQty+itemQtyDest;
-                                int totalQtySrc = (itemQty+itemQtyDest) > MAX_CAP ? totalQtyDest-MAX_CAP : 0;
+                                int totalQtySrc = (itemQty+itemQtyDest) > MAX_CAP ? itemQty+itemQtyDest-MAX_CAP : 0;
                                 playerInventory.setQuantityAtIndex(indexDest, totalQtyDest);
                                 playerInventory.setQuantityAtIndex(indexSrc, totalQtySrc);
                                 if (playerInventory.getQuantityAtIndex(indexSrc) == 0) { // Jika kosong setelah pemindahan
