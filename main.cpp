@@ -252,7 +252,8 @@ int main() {
                         itrNonTool = nonToolContainer.find(itemNameSrc);
                         if (itrTool != toolContainer.end()) {
                             int posBeforeMove = playerInventory.findPosForMOVE(itemNameSrc, slotIdSrc);
-                            int posAfterMove = playerInventory.findPosForMOVE(itemNameSrc, slotIdDest) - 1;
+                            int quantitySrc = playerInventory.getPtrItemAtIndex(indexSrc)->getQuantity();
+                            int posAfterMove = min(playerInventory.findPosForMOVE(itemNameSrc, slotIdDest), quantitySrc);
                             int durability = itrTool->second.getDurabilityAtPos(posBeforeMove);
                             itrTool->second.removeDurabilityAtPos(posBeforeMove);
                             itrTool->second.insertDurabilityAtPos(posAfterMove, durability);
