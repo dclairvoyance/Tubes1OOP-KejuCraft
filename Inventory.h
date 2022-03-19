@@ -31,6 +31,7 @@ public:
     int findIndexBySlotId(string id);
     int findPosForGIVE(string itemName);
     int findPosForMOVE(string itemName, string slotId);
+    int findPosAfterMOVE(string itemName, string slotIdSrc, string slotIdDest);
     bool isSlotEmptyAtIndex(int index);
     void print();
 };

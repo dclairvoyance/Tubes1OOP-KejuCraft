@@ -92,6 +92,18 @@ int Inventory::findPosForMOVE(string itemName, string slotId) {
     return count+1;
 }
 
+int Inventory::findPosAfterMOVE(string itemName, string slotIdSrc, string slotIdDest) {
+    int count = 0;
+    int index = 0;
+    while (this->slots[index].getId() != slotIdDest) {
+        if (this->getItemNameAtIndex(index) == itemName && this->getSlotIdAtIndex(index) != slotIdSrc) {
+            count++;
+        }
+        index++;
+    }
+    return count+1;
+}
+
 int Inventory::getItemIdAtIndex(int index) {
     if (this->getPtrItemAtIndex(index) == NULL) {
         return 0;
