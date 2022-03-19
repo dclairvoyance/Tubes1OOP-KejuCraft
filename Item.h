@@ -37,17 +37,17 @@ public:
 
 class Tool : public Item {
 private:
-    vector<int> arrDurability;     /* durability of item */
+    vector<int> arrDurability;                                              /* durability of item */
 public:
     Tool();                                                                 /* default constructor */
-    Tool(int id, string name, string type, int quantity);   /* user-defined constructor */
+    Tool(int id, string name, string type, int quantity);                   /* user-defined constructor */
     virtual ~Tool();                                                        /* destructor */
-    int getDurabilityAtPos(int pos);                                                    /* get durability attribute of tool */
-    void insertDurabilityAtPos(int pos, int durability);
-    void decrementDurabilityAtPos(int pos);
-    void removeDurabilityAtPos(int pos);
-    void useAtPos(int pos);
-    void printDurabilities();                                                             /* use nontool (decrease durability) */
+    int getDurabilityAtPos(int pos);                                        /* get durability attribute of tool */
+    void insertDurabilityAtPos(int pos, int durability);                    /* insert durability at position and increment quantity */
+    void decrementDurabilityAtPos(int pos);                                 /* decrement durability at position */
+    void removeDurabilityAtPos(int pos);                                    /* remove durability at position and decrement quantity */
+    void useAtPos(int pos);                                                 /* decrement durability at position */
+    void printDurabilities();                                               /* use nontool (decrease durability) */
     void print();                                                           /* print info */
 };
 
