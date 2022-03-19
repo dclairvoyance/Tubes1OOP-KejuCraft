@@ -56,27 +56,53 @@ void NonTool::print() {
 NonTool::~NonTool() {}
 
 Tool::Tool() : Item() {
-    this->durability = 10;
+    vector<int> arr;
+    this->arrDurability = arr;
 } // Pertama kali dapet, durability = 10
 
-Tool::Tool(int id, string name, string type, int quantity, int durability) : Item(id, name, type, quantity) {
-    this->durability = durability;
+Tool::Tool(int id, string name, string type, int quantity) : Item(id, name, type, quantity) {
+    vector<int> arr;
+    arr.assign(quantity, 10);
+    this->arrDurability = arr;
 }
 
 Tool::~Tool() {}
 
-int Tool::getDurability() {
-    return this->durability;
+int Tool::getDurabilityAtPos(int pos) {
+    return this->arrDurability[pos-1];
 }
 
-void Tool::use() { // butuh exception pas durability 0
-    this->durability--;
-    if (this->durability == 0) {
+void Tool::useAtPos(int pos) { // butuh exception pas durability 0
+    this->arrDurability[pos-1]--;
+    if (this->arrDurability[pos-1] == 0) {
+        this->arrDurability.erase(this->arrDurability.begin()+pos-1);
         this->quantity--;
     }
 }
 
+void Tool::removeDurabilityAtPos(int pos) {
+    this->quantity--;
+    this->arrDurability.erase(this->arrDurability.begin()+pos-1);
+}
+
+void Tool::insertDurabilityAtPos(int pos, int durability) {
+    this->quantity++;
+    this->arrDurability.emplace(this->arrDurability.begin()+pos-1, durability);
+}
+
+void Tool::decrementDurabilityAtPos(int pos) {
+    this->arrDurability[pos-1]--;
+}
+
+void Tool::printDurabilities() {
+    cout << "[ ";
+    for (int i=0; i<this->quantity; i++) {
+        cout << this->arrDurability[i] << " ";
+    }
+    cout << "]" << endl;
+}
+
 void Tool::print() {
     Item::print();
-    cout << "durability: " << this->durability << endl;
+    this->printDurabilities();
 }

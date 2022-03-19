@@ -5,6 +5,7 @@
 #define _ITEM_H_
 
 #include <iostream>
+#include <vector>
 using namespace std;
 
 class Item {
@@ -36,13 +37,17 @@ public:
 
 class Tool : public Item {
 private:
-    int durability;     /* durability of item */
+    vector<int> arrDurability;     /* durability of item */
 public:
     Tool();                                                                 /* default constructor */
-    Tool(int id, string name, string type, int quantity, int durability);   /* user-defined constructor */
+    Tool(int id, string name, string type, int quantity);   /* user-defined constructor */
     virtual ~Tool();                                                        /* destructor */
-    int getDurability();                                                    /* get durability attribute of tool */
-    void use();                                                             /* use nontool (decrease durability) */
+    int getDurabilityAtPos(int pos);                                                    /* get durability attribute of tool */
+    void insertDurabilityAtPos(int pos, int durability);
+    void decrementDurabilityAtPos(int pos);
+    void removeDurabilityAtPos(int pos);
+    void useAtPos(int pos);
+    void printDurabilities();                                                             /* use nontool (decrease durability) */
     void print();                                                           /* print info */
 };
 
