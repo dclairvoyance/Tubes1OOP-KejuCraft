@@ -295,19 +295,23 @@ int main() {
             string inventorySlotId;
             cin >> inventorySlotId;
             int index = playerInventory.findIndexBySlotId(inventorySlotId);
-            string itemName = playerInventory.getItemNameAtIndex(index);
-            itrTool = toolContainer.find(itemName);
-            itrNonTool = nonToolContainer.find(itemName);
-            if (itrTool != toolContainer.end()) {
-                int pos = playerInventory.findPosForMOVE(itemName, inventorySlotId);
-                itrTool->second.decrementDurabilityAtPos(pos);
-                if (itrTool->second.getDurabilityAtPos(pos) == 0) { // Jika durability habis
-                    itrTool->second.removeDurabilityAtPos(pos);
-                    itrTool->second.addQuantity(-1); // kurangi quantity di container
-                    playerInventory.addQuantityAtIndex(index, -1); // kurangi quantity di slot
-                }
+            if (playerInventory.getPtrItemAtIndex(index) == NULL) {
+                cout << "Tidak ada item di slot!" << endl;
             } else {
-                cout << "Item NonTool tidak dapat digunakan!" << endl;
+                string itemName = playerInventory.getItemNameAtIndex(index);
+                itrTool = toolContainer.find(itemName);
+                itrNonTool = nonToolContainer.find(itemName);
+                if (itrTool != toolContainer.end()) {
+                    int pos = playerInventory.findPosForMOVE(itemName, inventorySlotId);
+                    itrTool->second.decrementDurabilityAtPos(pos);
+                    if (itrTool->second.getDurabilityAtPos(pos) == 0) { // Jika durability habis
+                        itrTool->second.removeDurabilityAtPos(pos);
+                        playerInventory.addQuantityAtIndex(index, -1); // kurangi quantity di slot
+                        playerInventory.setPtrItemAtIndex(index, NULL);
+                    }
+                } else {
+                    cout << "Item NonTool tidak dapat digunakan!" << endl;
+                }
             }
         } else if (command == "EXPORT") {
             string filePath, itemName, outText;
