@@ -16,6 +16,13 @@ Item::Item(int id, string name, string type, int quantity) : id(id) {
     this->quantity = quantity;
 }
 
+Item& Item::operator=(const Item& other){
+    this->name = other.name;
+    this->type = other.type;
+    this->quantity = other.quantity;
+    return *this;
+}
+
 Item::~Item() {}
 
 int Item::getId() {

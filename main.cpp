@@ -7,6 +7,7 @@
 #include "Item.h"
 #include "Inventory.h"
 #include "Slot.h"
+#include "CraftingRecipe.h"
 using namespace std;
 
 int main() {
@@ -80,6 +81,10 @@ int main() {
     ifstream itemConfigFile(itemConfigPath);
     string intext;
 
+    // Membuat iterator
+    map<string, Tool>::iterator itrTool;
+    map<string, NonTool>::iterator itrNonTool;
+    
     // Pisahkan item tool dan nontool
     while (getline(itemConfigFile, intext)) {
         stringstream ss(intext);
@@ -99,14 +104,94 @@ int main() {
     itemConfigFile.close();
     cout << "EOF reached.." << endl;
 
+int recipeCount = 0;
+    for (const auto &entry : filesystem::directory_iterator(configPath + "/recipe")) {
+        recipeCount++;
+    }
+
+    CraftingRecipe* recipeContainer = new CraftingRecipe[recipeCount];
+    int recipeLocation = 0;
+
+    for (const auto &entry : filesystem::directory_iterator(configPath + "/recipe")) {
+        string recipeConfigPath = entry.path().string();
+        cout << recipeConfigPath << endl;
+        ifstream recipeConfigFile(recipeConfigPath);
+        bool isDone = false;
+        while (isDone == false){
+            getline(recipeConfigFile, intext);
+            stringstream ss(intext);
+            int row, col, quantity;
+            string temp;
+            Item output;
+            ss >> row >> col;
+
+            Item** resep = new Item* [row];
+            for (int i = 0; i<row; i++){
+                resep[i] = new Item[col];
+            }
+
+            for (int i = 0; i<row; i++){
+                getline(recipeConfigFile, intext);
+                stringstream ss2(intext);
+                for (int j = 0; j<col; j++){
+                    
+                    ss2 >> temp;
+
+                    if (temp == "-"){
+                        resep[i][j] = Item();
+                        
+                    }
+                    else {
+                        for (itrNonTool = nonToolContainer.begin(); itrNonTool!=nonToolContainer.end(); itrNonTool++) {
+                            if (itrNonTool->first == temp){
+                                resep[i][j] = itrNonTool->second;
+                                
+                            }
+                        }
+
+                        for (itrNonTool = nonToolContainer.begin(); itrNonTool!=nonToolContainer.end(); itrNonTool++) {
+                            if (itrNonTool->second.getType() == temp){
+                                resep[i][j] = itrNonTool->second;
+                                
+                            }
+                        }
+                    }
+                    
+                }
+            }
+
+            getline(recipeConfigFile, intext);
+            stringstream ss3(intext);
+
+            string temp2;
+            ss3 >> temp2;
+
+            for (itrNonTool = nonToolContainer.begin(); itrNonTool!=nonToolContainer.end(); itrNonTool++) {
+                if (itrNonTool->first == temp2){
+                    output=itrNonTool->second;
+                }
+            }
+
+            for (itrTool = toolContainer.begin(); itrTool!=toolContainer.end(); itrTool++) {
+                if (itrTool->first == temp2){
+                    output=itrTool->second;
+                }
+            }
+
+            ss3 >> quantity;
+            
+            CraftingRecipe finalresult(row, col, resep, output, quantity);
+            recipeContainer[recipeLocation] = finalresult;
+            recipeLocation++;
+            isDone = true;
+        }
+    }
     // Membaca file recipe
     // for (const auto &entry : filesystem::directory_iterator(configPath + "/recipe")) {
     //     cout << entry.path() << endl;
     // }
 
-    // Membuat iterator
-    map<string, Tool>::iterator itrTool;
-    map<string, NonTool>::iterator itrNonTool;
+    
 
     // Mencetak seluruh isi map
     // cout << "NonTools: " << endl;
@@ -121,6 +206,10 @@ int main() {
     //     cout << itrTool->first << endl;
     //     itrTool->second.print();
     //     cout << endl;
+    // }
+
+    // for (int i = 0; i<recipeCount; i++){
+    //     recipeContainer[i].print();
     // }
 
     string command;

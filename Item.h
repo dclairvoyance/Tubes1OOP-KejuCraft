@@ -17,6 +17,7 @@ protected:
 public:
     Item();                                                 /* default constructor */
     Item(int id, string name, string type, int quantity);   /* user-defined constructor */
+    Item& operator=(const Item& other);                     /* operator = */
     virtual ~Item();                                        /* destructor */
     int getId();                                            /* get id attribute of item */
     string getName();                                       /* get name attribute of item */
