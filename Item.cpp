@@ -104,5 +104,6 @@ void Tool::printDurabilities() {
 
 void Tool::print() {
     Item::print();
+    cout << "durability: ";
     this->printDurabilities();
 }
