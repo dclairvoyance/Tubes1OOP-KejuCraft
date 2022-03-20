@@ -11,6 +11,12 @@
 #include "CraftingTable.h"
 using namespace std;
 
+void printBetter(int index) {
+    if (index/10 == 0) {
+        cout << " ";
+    }
+}
+
 int main() {
     /*
     string configPath = "./config";
@@ -232,10 +238,14 @@ int main() {
                 cout << endl;
             }
 
+            // print inventory
             for (int i=0; i<MAX_SLOT; i++) {
-                // print inventory
-                cout << "[" << playerInventory.getSlotIdAtIndex(i) << " ";
+                cout << "[";
+                cout << playerInventory.getSlotIdAtIndex(i) << " ";
+                printBetter(i);
+                // ada item pada slot
                 if (playerInventory.getPtrItemAtIndex(i) != NULL) {
+                    printBetter(playerInventory.getItemIdAtIndex(i));
                     cout << playerInventory.getItemIdAtIndex(i) << " ";
                     string itemName = playerInventory.getItemNameAtIndex(i);
                     string slotId = playerInventory.getSlotIdAtIndex(i);
@@ -243,11 +253,18 @@ int main() {
                     itrTool = toolContainer.find(itemName);
                     itrNonTool = nonToolContainer.find(itemName);
                     if (itrTool != toolContainer.end()) { // Jika tool, cetak durability
+                        printBetter(itrTool->second.getDurabilityAtPos(pos));
                         cout << itrTool->second.getDurabilityAtPos(pos);
                     } else { // Jika nontool, cetak quantity
+                        printBetter(playerInventory.getQuantityAtIndex(i));
                         cout << playerInventory.getQuantityAtIndex(i);
                     }
-                } else {
+                } 
+                // tidak ada item pada slot
+                else {
+                    printBetter(playerInventory.getItemIdAtIndex(i));
+                    cout << playerInventory.getItemIdAtIndex(i) << " ";
+                    printBetter(playerInventory.getQuantityAtIndex(i));
                     cout << playerInventory.getQuantityAtIndex(i);
                 }
                 cout << "] ";
@@ -615,7 +632,19 @@ int main() {
                 cout << "no item can be crafted";
             }
 
-        } else {
+        }
+        else if (command == "EXIT") {
+            char exit;
+            cout << "To exit and export, type 'Y'" << endl;;
+            cout << "To exit without export, ";
+            cin >> exit;
+        }
+        else if (command == "HELP") {
+            cout << "EXIT: " << endl;
+            // TODO
+        }
+        // invalid command 
+        else {
             cout << "Invalid command" << endl;
         }
     }
