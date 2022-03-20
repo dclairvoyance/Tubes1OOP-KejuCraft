@@ -16,15 +16,16 @@ protected:
     int quantity;       /* total items owned by player */
 public:
     Item();                                                 /* default constructor */
-    Item(int id, string name, string type, int quantity);   /* user-defined constructor */
-    Item& operator=(const Item& other);                     /* operator = */
+    Item(int id, string name, string type, int quantity);   /* user-defined constructor */ 
     virtual ~Item();                                        /* destructor */
     int getId();                                            /* get id attribute of item */
     string getName();                                       /* get name attribute of item */
     string getType();                                       /* get type attribute of item */
     int getQuantity();                                      /* get quantity attribute of item */
+    void setQuantity(int quantity);
     void addQuantity(int quantity);                         /* add quantity of item owned by player */
-    virtual void print();                                   /* print info */
+    virtual void print(); 
+    Item& operator=(const Item& other);                                  /* print info */
 };
 
 class NonTool : public Item {
@@ -38,17 +39,17 @@ public:
 
 class Tool : public Item {
 private:
-    vector<int> arrDurability;                                              /* durability of item */
+    vector<int> arrDurability;     /* durability of item */
 public:
     Tool();                                                                 /* default constructor */
-    Tool(int id, string name, string type, int quantity);                   /* user-defined constructor */
+    Tool(int id, string name, string type, int quantity);   /* user-defined constructor */
     virtual ~Tool();                                                        /* destructor */
-    int getDurabilityAtPos(int pos);                                        /* get durability attribute of tool */
-    void insertDurabilityAtPos(int pos, int durability);                    /* insert durability at position and increment quantity */
-    void decrementDurabilityAtPos(int pos);                                 /* decrement durability at position */
-    void removeDurabilityAtPos(int pos);                                    /* remove durability at position and decrement quantity */
-    void useAtPos(int pos);                                                 /* decrement durability at position */
-    void printDurabilities();                                               /* use nontool (decrease durability) */
+    int getDurabilityAtPos(int pos);                                                    /* get durability attribute of tool */
+    void insertDurabilityAtPos(int pos, int durability);
+    void decrementDurabilityAtPos(int pos);
+    void removeDurabilityAtPos(int pos);
+    void useAtPos(int pos);
+    void printDurabilities();                                                             /* use nontool (decrease durability) */
     void print();                                                           /* print info */
 };
 

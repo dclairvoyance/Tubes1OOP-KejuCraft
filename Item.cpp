@@ -40,6 +40,9 @@ string Item::getType() {
 int Item::getQuantity() {
     return this->quantity;
 }
+void Item::setQuantity(int quantity){
+    this->quantity = quantity;
+}
 
 void Item::addQuantity(int quantity) {
     this->quantity += quantity;
@@ -111,6 +114,5 @@ void Tool::printDurabilities() {
 
 void Tool::print() {
     Item::print();
-    cout << "durability: ";
     this->printDurabilities();
 }

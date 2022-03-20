@@ -9,11 +9,11 @@ CraftingRecipe::CraftingRecipe(){
     for (int i = 0; i<this->row; i++){
         resep[i] = new string[this->col];
     }
-    this->output = string();
+    this->output = Item();
     this->quantity = 0;
 }
 
-CraftingRecipe::CraftingRecipe(int row, int col, string** resep, string output, int quantity){
+CraftingRecipe::CraftingRecipe(int row, int col, string** resep, Item output, int quantity){
     this->row = row;
     this->col = col;
     
@@ -82,6 +82,26 @@ void CraftingRecipe::print(){
         }
         cout << endl;
     }
-    cout << "Hasil: " << this->output << endl;
+    cout << "Hasil: " << this->output.getName() << endl;
     cout << "Jumlah: "<< this->quantity << endl;
+}
+
+int CraftingRecipe::getRow(){
+    return this->row;
+}
+
+int CraftingRecipe::getCol(){
+    return this->col;
+}
+
+string CraftingRecipe::getResep(int i, int j){
+    return this->resep[i][j];
+}
+
+Item CraftingRecipe::getOutput(){
+    return this->output;
+}
+
+int CraftingRecipe::getQuantity(){
+    return this->quantity;
 }
