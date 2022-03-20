@@ -67,15 +67,16 @@ int main() {
     }
     */
 
-    // Container untuk tool dan nontool
+    // BAGIAN I: Membaca Item
+    // Me-construct container untuk tool dan nontool
     map<string, Tool> toolContainer;
     map<string, NonTool> nonToolContainer;
 
-    // Inventory pemain
+    // Me-construct Inventory dan CraftingTable pemain
     Inventory playerInventory;
     CraftingTable tableInventory;
 
-    // Path ke folder config
+    // Mengeset ke path config
     string configPath = "./config";
     string itemConfigPath = configPath + "/item.txt";
 
@@ -87,7 +88,7 @@ int main() {
     map<string, Tool>::iterator itrTool;
     map<string, NonTool>::iterator itrNonTool;
     
-    // Pisahkan item tool dan nontool
+    // Memisahkan item tool dan nontool dan meletakkan dalam container masing-masing
     while (getline(itemConfigFile, intext)) {
         stringstream ss(intext);
         string name, type, isTool;
@@ -102,24 +103,29 @@ int main() {
         }
     }
 
-    // Pembacaan file item config selesai
+    // Menyelesaikan pembacaan file item config
     itemConfigFile.close();
     cout << "EOF reached.." << endl;
 
+    // BAGIAN II: Membaca Recipe
+    // Menghitung banyak recipe
     int recipeCount = 0;
     for (const auto &entry : filesystem::directory_iterator(configPath + "/recipe")) {
         recipeCount++;
     }
 
+    // Me-construct CraftingRecipe sebanyak recipeCount
     CraftingRecipe* recipeContainer = new CraftingRecipe[recipeCount];
     int recipeLocation = 0;
 
+    // Mengisi setiap CraftingRecipe
     for (const auto &entry : filesystem::directory_iterator(configPath + "/recipe")) {
         string recipeConfigPath = entry.path().string();
-        cout << recipeConfigPath << endl;
+        // cout << recipeConfigPath << endl;
         ifstream recipeConfigFile(recipeConfigPath);
         bool isDone = false;
         while (isDone == false){
+            // Membaca baris pertama (ROW COL)
             getline(recipeConfigFile, intext);
             stringstream ss(intext);
             int row, col, quantity;
@@ -128,11 +134,13 @@ int main() {
             Item itemNameResult;
             ss >> row >> col;
             
+            // Menyiapkan container untuk string
             string** resep = new string* [row];
             for (int i = 0; i<row; i++){
                 resep[i] = new string[col];
             }
 
+            // Membaca dan meletakkan resep crafting dalam container string
             for (int i = 0; i<row; i++){
                 getline(recipeConfigFile, intext);
                 stringstream ss2(intext);
@@ -142,23 +150,27 @@ int main() {
                 }
             }
 
+            // Membaca baris terakhir (hasil crafting)
             getline(recipeConfigFile, intext);
             stringstream ss3(intext);
             ss3 >> itemName;
             ss3 >> quantity;
 
+            // Mencari nama dari itemName nonTool untuk diletakkan dalam atribut CraftingRecipe
             for (itrNonTool = nonToolContainer.begin(); itrNonTool!=nonToolContainer.end(); itrNonTool++){
                 if (itrNonTool->first == itemName){
                     itemNameResult = itrNonTool->second;
                 }
             }
 
+            // Mencari nama dari itemName Tool untuk diletakkan dalam atribut CraftingRecipe
             for (itrTool = toolContainer.begin(); itrTool!=toolContainer.end(); itrTool++){
                 if (itrTool->first == itemName){
                     itemNameResult = itrTool->second;
                 }
             }
 
+            // Meletakkan recipe dalam CraftingRecipe
             CraftingRecipe finalrecipe(row,col,resep,itemNameResult,quantity);
             recipeContainer[recipeLocation] = finalrecipe;
             recipeLocation++;
@@ -166,12 +178,11 @@ int main() {
             
         }
     }
+
     // Membaca file recipe
     // for (const auto &entry : filesystem::directory_iterator(configPath + "/recipe")) {
     //     cout << entry.path() << endl;
     // }
-
-    
 
     // Mencetak seluruh isi map
     // cout << "NonTools: " << endl;
@@ -188,12 +199,14 @@ int main() {
     //     cout << endl;
     // }
 
-    for (int i = 0; i<recipeCount; i++){
-        recipeContainer[i].print();
-    }
+    // for (int i = 0; i<recipeCount; i++){
+    //     recipeContainer[i].print();
+    // }
 
+    // BAGIAN III: Meng-handle Command
     string command;
     while (cin >> command) {
+        // Command SHOW
         if (command == "SHOW") {
             // print craftingTable
             for (int i=0; i<MAX_ROW; i++) {
@@ -243,7 +256,9 @@ int main() {
                     cout << endl;
                 }
             }
-        } else if (command == "GIVE") {
+        } 
+        // Command GIVE
+        else if (command == "GIVE") {
             string itemName;
             int itemQty;
             cin >> itemName >> itemQty;
@@ -303,7 +318,9 @@ int main() {
             } else { // Jika tidak ditemukan diantara keduanya
                 cout << "Tidak ditemukan nama tersebut sehingga tidak dapat menambahkan item ke inventory" << endl;
             }
-        } else if (command == "DISCARD") {
+        } 
+        // Command DISCARD
+        else if (command == "DISCARD") {
             string inventorySlotId;
             int itemQty;
             cin >> inventorySlotId >> itemQty;
@@ -328,7 +345,9 @@ int main() {
                     playerInventory.setPtrItemAtIndex(index, NULL);
                 }
             }
-        } else if (command == "MOVE") {
+        } 
+        // Command MOVE
+        else if (command == "MOVE") {
             string slotIdSrc;
             int itemQty;
             string slotIdDest;
@@ -423,7 +442,9 @@ int main() {
             } else {
                 cout << "Id slot tidak valid!" << endl;
             }
-        } else if (command == "USE") {
+        } 
+        // Command USE
+        else if (command == "USE") {
             string inventorySlotId;
             cin >> inventorySlotId;
             int index = playerInventory.findIndexBySlotId(inventorySlotId);
@@ -445,7 +466,9 @@ int main() {
                     cout << "Item NonTool tidak dapat digunakan!" << endl;
                 }
             }
-        } else if (command == "EXPORT") {
+        } 
+        // Command EXPORT
+        else if (command == "EXPORT") {
             string filePath, itemName, outText;
             int idItem, quantity, durability;
             cin >> filePath;
@@ -472,7 +495,9 @@ int main() {
                 }
             }
 
-        } else if (command == "CRAFT") {
+        } 
+        // Command CRAFT
+        else if (command == "CRAFT") {
             Item*** tableContent = new Item** [MAX_ROW];
             int isCrafted = 0;
             for (int i = 0; i<MAX_ROW; i++){
