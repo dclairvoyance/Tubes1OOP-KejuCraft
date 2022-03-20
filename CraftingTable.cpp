@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include "CraftingTable.h"
+#include "Inventory.h"
+#include "Slot.h"
+using namespace std;
 
 CraftingTable::CraftingTable() {
     for (int i = 0; i < MAX_ROW; i++) {
@@ -14,36 +17,24 @@ CraftingTable::CraftingTable() {
     }
 }
 
-CraftingTable::CraftingTable(const CraftingTable& other) {
-    for (int i = 0; i < MAX_ROW; i++) {
-        for (int j = 0; j < MAX_COL; j++) {
-            
-        }
-    }
-}
-
 CraftingTable::~CraftingTable() {
     /* otomatis destruct */
 }
 
-CraftingTable& CraftingTable::operator=(const CraftingTable& other) {
-
-}
-
-int CraftingTable::getRow(int id) {
+int CraftingTable::getRow(int id){
     return id/3;
 }
 
-int CraftingTable::getCol(int id) {
+int CraftingTable::getCol(int id){
     return id%3;
 }
 
-SlotInventory CraftingTable::getSlot(int index) {
+SlotInventory CraftingTable::getSlot(int index){
     return this->slots(getRow(index), getCol(index));
 }
 
-bool CraftingTable::isSlotEmpty(int index) {
-    return getSlot(index).getQuantity() == 0;
+bool CraftingTable::isSlotEmpty(int row, int col) {
+    return this->slots(row, col).getPointerItem() == NULL;
 }
 
 bool CraftingTable::isSameItem(int index, Item* ptr) {
@@ -77,6 +68,7 @@ void CraftingTable::decPtrItem(int index, int quantity) {
     getSlot(index).addQuantity(-1 * quantity);
 }
 
+/*
 bool CraftingTable::checkCraft() {
     return ;
 }
@@ -84,6 +76,7 @@ bool CraftingTable::checkCraft() {
 Item* CraftingTable::craft() {
     return ;
 }
+*/
 
 void CraftingTable::resetCraftingTable() {
     for (int i = 0; i < MAX_ROW*MAX_COL; i++) {
@@ -91,10 +84,43 @@ void CraftingTable::resetCraftingTable() {
     }
 }
 
+/*
 void CraftingTable::print() {
 
 }
+*/
+
 /* opt: either put here or Slot.h */
+
+string CraftingTable::getSlotIdByCoord(int row, int col) {
+    return this->slots(row, col).getId();
+}
+
+int CraftingTable::getItemIdByCoord(int row, int col) {
+    return this->slots(row, col).getPointerItem()->getId();
+}
+
+string CraftingTable::getItemNameByCoord(int row, int col) {
+    return this->slots(row, col).getPointerItem()->getName();
+}
+
+int CraftingTable::getQuantityByCoord(int row, int col) {
+    return this->slots(row, col).getQuantity();
+}
+
+int CraftingTable::findPosForTool(Inventory inv, int row, int col) {
+    string itemName = this->getItemNameByCoord(row, col);
+    int count = inv.countOccurence(itemName);
+    string slotId = this->getSlotIdByCoord(row, col);
+    int index = 0;
+    while (index < MAX_ROW*MAX_COL && this->getSlotIdByCoord(row, col) != slotId) {
+        if (this->getItemNameByCoord(getRow(index), getCol(index)) == itemName) {
+            count++;
+        }
+        index++;
+    }
+    return count+1;
+}
 
 int CraftingTable::findIndexBySlotId(string slotIdDest){
     for (int i = 0; i<MAX_ROW; i++){

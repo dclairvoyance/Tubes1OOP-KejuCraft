@@ -34,6 +34,7 @@ public:
     int findPosAfterMOVE(string itemName, string slotIdSrc, string slotIdDest); /* counting pos [1..n] for MOVE purposes */
     bool isSlotEmptyAtIndex(int index);                 /* return true if slot is empty at index */
     void print();                                       /* printInfo */
+    int countOccurence(string itemName);
 };
 
 #endif

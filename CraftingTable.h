@@ -9,20 +9,20 @@
 #include <iostream>
 #include "Slot.h"
 #include "Matrix.h"
+#include "Inventory.h"
+#include "Slot.h"
 
 class CraftingTable {
 private:
     Matrix<SlotInventory, MAX_ROW, MAX_COL> slots;  /* matrix of slot */
     // SlotInventory slots[MAX_ROW][MAX_COL];
 public:
-    CraftingTable();                                        /* default constructor */
-    CraftingTable(const CraftingTable& other);              /* copy constructor */
-    ~CraftingTable();                                       /* destructor */
-    CraftingTable& operator=(const CraftingTable& other);   /* assignment operator overloading */
+    CraftingTable();                                        /* default constructor */          /* copy constructor */
+    ~CraftingTable();                                       /* destructor */   /* assignment operator overloading */
     int getRow(int id);                                     /* get row from id */
     int getCol(int id);                                     /* get col from id */
     SlotInventory getSlot(int index);                       /* get slot[row][col] */                      
-    bool isSlotEmpty(int index);                            /* (opt) true if slot at index is empty */
+    bool isSlotEmpty(int row, int col);                     /* (opt) true if slot at index is empty */
     bool isSameItem(int index, Item* ptr);                  /* (opt) true if slot contains same item as ptr */
     void setPtrItem(int index, Item* ptr);                  /* (opt) set ptr item into slot[row][col] */
     void addPtrItem(int index, int quantity);
@@ -34,6 +34,13 @@ public:
     void resetCraftingTable();                              /* empty all slots of crafting table */
     void print();                                           /* print info */
     /* opt: either put here or Slot.h */
+
+    string getSlotIdByCoord(int row, int col);
+    int getItemIdByCoord(int row, int col);
+    string getItemNameByCoord(int row, int col);
+    int getQuantityByCoord(int row, int col);
+    int findPosForTool(Inventory inv, int row, int col);
+
     int findIndexBySlotId(string slotIdDest);
     int getQuantityAtIndex(int index);
     string getItemNameAtIndex(int index);
