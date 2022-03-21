@@ -106,7 +106,7 @@ void Tool::decrementDurabilityAtPos(int pos) {
 
 void Tool::printDurabilities() {
     cout << "[ ";
-    for (int i=0; i<this->quantity; i++) {
+    for (int i=0; i<this->arrDurability.size(); i++) {
         cout << this->arrDurability[i] << " ";
     }
     cout << "]" << endl;
