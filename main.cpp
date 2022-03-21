@@ -220,9 +220,13 @@ int main() {
         if (command == "SHOW") {
             // print craftingTable
             for (int i=0; i<MAX_ROW; i++) {
+                cout << "                                    ";
                 for (int j=0; j<MAX_COL; j++) {
                     cout << "[" << tableInventory.getSlotIdByCoord(i, j) << " ";
+                    printBetter(i*MAX_COL+j);
                     if (!tableInventory.isSlotEmptyAtIndex(i*MAX_ROW+j)) {
+                        // slot tidak kosong
+                        printBetter(tableInventory.getItemIdByCoord(i, j));
                         cout << tableInventory.getItemIdByCoord(i, j) << " ";
                         string itemName = tableInventory.getItemNameByCoord(i, j);
                         string slotId = tableInventory.getSlotIdByCoord(i, j);
@@ -230,11 +234,16 @@ int main() {
                         itrNonTool = nonToolContainer.find(itemName);
                         if (itrTool != toolContainer.end()) { // Jika tool, cetak durability
                             int pos = playerInventory.countOccurence(itemName) + tableInventory.countOccurence(itemName, i*MAX_ROW+j) + 1;
+                            printBetter(itrTool->second.getDurabilityAtPos(pos));
                             cout << itrTool->second.getDurabilityAtPos(pos);
                         } else { // Jika nontool, cetak quantity
+                            printBetter(tableInventory.getQuantityByCoord(i, j));
                             cout << tableInventory.getQuantityByCoord(i, j);
                         }
-                    } else {
+                    } else { 
+                        // slot kosong
+                        cout << " 0 ";
+                        printBetter(tableInventory.getQuantityByCoord(i, j));
                         cout << tableInventory.getQuantityByCoord(i, j);
                     }
                     cout << "] ";
