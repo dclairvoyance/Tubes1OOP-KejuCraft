@@ -353,9 +353,8 @@ int main() {
             } else { // Jika item cukup untuk dihapus
                 // Mengurangi quantity di container
                 if (itrTool != toolContainer.end()) {
-                    itrTool->second.addQuantity(-itemQty);
                     int pos = playerInventory.findPosForMOVE(itemName, inventorySlotId);
-                    itrTool->second.removeDurabilityAtPos(pos); // Menghapus durability
+                    itrTool->second.removeDurabilityAtPos(pos); // Menghapus durability sekaligus mengurangi quantity
                 } else {
                     itrNonTool->second.addQuantity(-itemQty);
                 }
