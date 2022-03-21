@@ -538,7 +538,9 @@ int main() {
             string inventorySlotId;
             cin >> inventorySlotId;
             int index = playerInventory.findIndexBySlotId(inventorySlotId);
-            if (playerInventory.getPtrItemAtIndex(index) == NULL) {
+            if (index == -1) {
+                cout << "Id slot tidak valid!" << endl;
+            } else if (playerInventory.getPtrItemAtIndex(index) == NULL) {
                 cout << "Tidak ada item di slot!" << endl;
             } else {
                 string itemName = playerInventory.getItemNameAtIndex(index);
@@ -658,9 +660,7 @@ int main() {
                                             if (tableResep[m][n] != "-"){
                                                 isSame = 0;
                                             }
-                                        }
-
-                                        else if (tableResep[m][n] != tableContent[j+m][k+n]->getName() && tableResep[m][n] != tableContent[j+m][k+n]->getType()){
+                                        } else if (tableResep[m][n] != tableContent[j+m][k+n]->getName() && tableResep[m][n] != tableContent[j+m][k+n]->getType()){
                                             isSame = 0;
                                         }
                                     }
@@ -679,7 +679,6 @@ int main() {
                                                 if (slotAmount - 1 == 0){
                                                     tableInventory.setPtrItemAtIndex(x*MAX_ROW+y, NULL);
                                                 }
-
                                             }
                                         }
                                     }
@@ -703,7 +702,6 @@ int main() {
                                         if (itemQty > 0) {
                                             cout << "Inventory penuh!" << endl;
                                         }
-
                                     } else if ( itrNonTool != nonToolContainer.end() ) { // Jika tipe item NonTool
                                         // Temukan semua slot yang berisi item ini
                                         int index = playerInventory.findIndexItem(&itrNonTool->second);
@@ -741,20 +739,16 @@ int main() {
                                             cout << "Inventory penuh!" << endl;
                                         }
                                     }
-
                                     i = recipeCount;
                                     j = MAX_ROW-recipeContainer[i].getRow()+1;
                                     k = MAX_COL-recipeContainer[i].getCol()+1;
-
                                 }
                             }
                         }
                     }
                 }
-            }
-
-            else{
-                for(map<string, Tool>::iterator itrTool = toolContainer.begin(); itrTool != toolContainer.end(); itrTool++){
+            } else {
+                for(itrTool = toolContainer.begin(); itrTool != toolContainer.end(); itrTool++){
                     int countTool = 0;
                     int totalDurability = 0;
                     for (int i = 0; i<MAX_ROW; i++){
@@ -807,16 +801,11 @@ int main() {
                     }
                 }
             }
-            //di sini error
-            
-
             if (isCrafted == 1){
                 cout << "item crafted" << endl;
             } else {
                 cout << "no item can be crafted" << endl;
             }
-            
-
         }
         else if (command == "EXIT") {
             char exit;
