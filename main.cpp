@@ -222,14 +222,14 @@ int main() {
             for (int i=0; i<MAX_ROW; i++) {
                 for (int j=0; j<MAX_COL; j++) {
                     cout << "[" << tableInventory.getSlotIdByCoord(i, j) << " ";
-                    if (!tableInventory.isSlotEmpty(i, j)) {
+                    if (!tableInventory.isSlotEmptyAtIndex(i*MAX_ROW+j)) {
                         cout << tableInventory.getItemIdByCoord(i, j) << " ";
                         string itemName = tableInventory.getItemNameByCoord(i, j);
                         string slotId = tableInventory.getSlotIdByCoord(i, j);
                         itrTool = toolContainer.find(itemName);
                         itrNonTool = nonToolContainer.find(itemName);
                         if (itrTool != toolContainer.end()) { // Jika tool, cetak durability
-                            int pos = tableInventory.findPosForTool(playerInventory, i, j);
+                            int pos = playerInventory.countOccurence(itemName) + tableInventory.countOccurence(itemName, i*MAX_ROW+j) + 1;
                             cout << itrTool->second.getDurabilityAtPos(pos);
                         } else { // Jika nontool, cetak quantity
                             cout << tableInventory.getQuantityByCoord(i, j);
@@ -292,15 +292,14 @@ int main() {
                     itemQty--;
                     playerInventory.addQuantityAtIndex(index, 1); // Menambah quantity di slot
                     playerInventory.setPtrItemAtIndex(index, &itrTool->second); // Menunjuk ke alamat item di container
-                    itrTool->second.addQuantity(1); // Menambah quantity item di container
-                    itrTool->second.insertDurabilityAtPos(pos, 10); // Durability awal = 10;
+                    itrTool->second.insertDurabilityAtPos(pos, 10); // Durability awal = 10 sekaligus menambah quantity;
                     index = playerInventory.findIndexEmpty();
                 }
                 // Jika tidak ada slot kosong tersisa 
                 if (itemQty > 0) {
                     cout << "Inventory penuh!" << endl;
                 }
-            } else if ( itrNonTool != nonToolContainer.end() ) { // Jika tipe item NonTool
+            } else if (itrNonTool != nonToolContainer.end()) { // Jika tipe item NonTool
                 // Temukan semua slot yang berisi item ini
                 int index = playerInventory.findIndexItem(&itrNonTool->second);
                 while (itemQty > 0 && index != -1) {
@@ -377,81 +376,144 @@ int main() {
                 if (slotIdDest[0] == 'I') { // Jika tujuannya ke slotInventory
                     int indexSrc = playerInventory.findIndexBySlotId(slotIdSrc);
                     int indexDest = playerInventory.findIndexBySlotId(slotIdDest);
-                    itemQty = playerInventory.getQuantityAtIndex(indexSrc);
-                    int itemQtyDest = playerInventory.getQuantityAtIndex(indexDest);
-                    if (itemQtyDest == 0) { // Jika ingin dipindahkan ke slot kosong
-                        string itemNameSrc = playerInventory.getItemNameAtIndex(indexSrc);
-                        itrTool = toolContainer.find(itemNameSrc);
-                        itrNonTool = nonToolContainer.find(itemNameSrc);
-                        if (itrTool != toolContainer.end()) {
-                            int posBeforeMove = playerInventory.findPosForMOVE(itemNameSrc, slotIdSrc);
-                            int posAfterMove = playerInventory.findPosAfterMOVE(itemNameSrc, slotIdSrc, slotIdDest);
-                            int durability = itrTool->second.getDurabilityAtPos(posBeforeMove);
-                            itrTool->second.removeDurabilityAtPos(posBeforeMove);
-                            itrTool->second.insertDurabilityAtPos(posAfterMove, durability);
-                        }
-                        playerInventory.setQuantityAtIndex(indexDest, itemQty);
-                        playerInventory.setPtrItemAtIndex(indexDest, playerInventory.getPtrItemAtIndex(indexSrc));
-                        playerInventory.setQuantityAtIndex(indexSrc, 0);
-                        playerInventory.setPtrItemAtIndex(indexSrc, NULL);
+                    if (playerInventory.isSlotEmptyAtIndex(indexSrc)) {
+                        cout << "Slot sumber kosong!" << endl;
                     } else {
-                        string itemNameDest = playerInventory.getItemNameAtIndex(indexDest);
-                        itrTool = toolContainer.find(itemNameDest);
-                        itrNonTool = nonToolContainer.find(itemNameDest);
-                        if (itrTool != toolContainer.end()) { // Jika item Tool yang akan ditumpuk
-                            cout << "Item Tool tidak dapat ditumpuk!" << endl;
-                        } else { // Jika item NonTool yang akan ditumpuk
-                            if (playerInventory.getItemIdAtIndex(indexSrc) != playerInventory.getItemIdAtIndex(indexDest)) { // Jika item berbeda
-                                cout << "Item berbeda tidak dapat ditumpuk!" << endl;
+                        string itemName = playerInventory.getItemNameAtIndex(indexSrc);
+                        itrTool = toolContainer.find(itemName);
+                        itrNonTool = nonToolContainer.find(itemName);
+                        if (itrTool != toolContainer.end()) {
+                            if (playerInventory.isSlotEmptyAtIndex(indexDest)) {
+                                int posBeforeMove = playerInventory.findPosForMOVE(itemName, slotIdSrc);
+                                int posAfterMove = playerInventory.findPosAfterMOVE(itemName, slotIdSrc, slotIdDest);
+                                int durability = itrTool->second.getDurabilityAtPos(posBeforeMove);
+                                itrTool->second.removeDurabilityAtPos(posBeforeMove);
+                                itrTool->second.insertDurabilityAtPos(posAfterMove, durability);
+                                playerInventory.setQuantityAtIndex(indexDest, playerInventory.getQuantityAtIndex(indexSrc));
+                                playerInventory.setPtrItemAtIndex(indexDest, playerInventory.getPtrItemAtIndex(indexSrc));
+                                playerInventory.setQuantityAtIndex(indexSrc, 0);
+                                playerInventory.setPtrItemAtIndex(indexSrc, NULL);
                             } else {
-                                int totalQtyDest = (itemQty+itemQtyDest) > MAX_CAP ? MAX_CAP : itemQty+itemQtyDest;
-                                int totalQtySrc = (itemQty+itemQtyDest) > MAX_CAP ? itemQty+itemQtyDest-MAX_CAP : 0;
-                                playerInventory.setQuantityAtIndex(indexDest, totalQtyDest);
-                                playerInventory.setQuantityAtIndex(indexSrc, totalQtySrc);
-                                if (playerInventory.getQuantityAtIndex(indexSrc) == 0) { // Jika kosong setelah pemindahan
-                                    playerInventory.setPtrItemAtIndex(indexSrc, NULL);
+                                cout << "Item Tool tidak dapat ditumpuk!" << endl;
+                            }
+                        } else {
+                            if (playerInventory.isSlotEmptyAtIndex(indexDest)) {
+                                playerInventory.setQuantityAtIndex(indexDest, playerInventory.getQuantityAtIndex(indexSrc));
+                                playerInventory.setPtrItemAtIndex(indexDest, playerInventory.getPtrItemAtIndex(indexSrc));
+                                playerInventory.setQuantityAtIndex(indexSrc, 0);
+                                playerInventory.setPtrItemAtIndex(indexSrc, NULL);
+                            } else {
+                                if (playerInventory.getItemNameAtIndex(indexDest) == itemName) {
+                                    int itemQtySrc = playerInventory.getQuantityAtIndex(indexSrc);
+                                    int itemQtyDest = playerInventory.getQuantityAtIndex(indexDest);
+                                    int totalQtyDest = (itemQtySrc+itemQtyDest) > MAX_CAP ? MAX_CAP : itemQtySrc+itemQtyDest;
+                                    int totalQtySrc = (itemQtySrc+itemQtyDest) > MAX_CAP ? itemQtySrc+itemQtyDest-MAX_CAP : 0;
+                                    playerInventory.setQuantityAtIndex(indexDest, totalQtyDest);
+                                    playerInventory.setQuantityAtIndex(indexSrc, totalQtySrc);
+                                    if (playerInventory.getQuantityAtIndex(indexSrc) == 0) { // Jika kosong setelah pemindahan
+                                        playerInventory.setPtrItemAtIndex(indexSrc, NULL);
+                                    }
+                                } else {
+                                    cout << "Item berbeda tidak dapat ditumpuk!" << endl;
                                 }
                             }
                         }
                     }
                 } else if (slotIdDest[0] == 'C') { // Jika tujuannya ke slotCrafting
                     int indexSrc = playerInventory.findIndexBySlotId(slotIdSrc);
-                    int indexDest = tableInventory.findIndexBySlotId(slotIdDest);
-                    itemQty = playerInventory.getQuantityAtIndex(indexSrc);
-                    int itemQtyDest = tableInventory.getQuantityAtIndex(indexDest);
-                    if (itemQtyDest == 0) { // Jika ingin dipindahkan ke slot kosong
-                        string itemNameSrc = playerInventory.getItemNameAtIndex(indexSrc);
-                        itrTool = toolContainer.find(itemNameSrc);
-                        itrNonTool = nonToolContainer.find(itemNameSrc);
-                        if (itrTool != toolContainer.end()) {
-                            int posBeforeMove = playerInventory.findPosForMOVE(itemNameSrc, slotIdSrc);
-                            int posAfterMove = 0;
-                            cout << posAfterMove << endl;
-                            int durability = itrTool->second.getDurabilityAtPos(posBeforeMove);
-                            itrTool->second.removeDurabilityAtPos(posBeforeMove);
-                            itrTool->second.insertDurabilityAtPos(posAfterMove, durability);
-                        }
-                        tableInventory.setQuantityAtIndex(indexDest, itemQty);
-                        tableInventory.setPtrItemAtIndex(indexDest, playerInventory.getPtrItemAtIndex(indexSrc));
-                        playerInventory.setQuantityAtIndex(indexSrc, 0);
-                        playerInventory.setPtrItemAtIndex(indexSrc, NULL);
-                    
-                    } else {
-                        string itemNameDest = tableInventory.getItemNameAtIndex(indexDest);
-                        itrTool = toolContainer.find(itemNameDest);
-                        itrNonTool = nonToolContainer.find(itemNameDest);
-                        if (itrTool != toolContainer.end()) { // Jika item Tool yang akan ditumpuk
-                            cout << "Item Tool tidak dapat ditumpuk!" << endl;
-                        } else { // Jika item NonTool yang akan ditumpuk
-                            if (playerInventory.getItemIdAtIndex(indexSrc) != tableInventory.getItemIdAtIndex(indexDest)) { // Jika item berbeda
-                                cout << "Item berbeda tidak dapat ditumpuk!" << endl;
-                            } else {
-                                int totalQtyDest = (itemQty+itemQtyDest) > MAX_CAP ? MAX_CAP : itemQty+itemQtyDest;
-                                int totalQtySrc = (itemQty+itemQtyDest) > MAX_CAP ? itemQty+itemQtyDest-MAX_CAP : 0;
-                                tableInventory.setQuantityAtIndex(indexDest, totalQtyDest);
-                                playerInventory.setQuantityAtIndex(indexSrc, totalQtySrc);
-                                if (playerInventory.getQuantityAtIndex(indexSrc) == 0) { // Jika kosong setelah pemindahan
+                    while (itemQty > 0) {
+                        if (playerInventory.isSlotEmptyAtIndex(indexSrc)) {
+                            cout << "Slot sumber kosong!" << endl;
+                        } else {
+                            int indexDest = tableInventory.findIndexBySlotId(slotIdDest);
+                            int itemQtyDest = tableInventory.getQuantityAtIndex(indexDest);
+                            if (itemQtyDest == 0) { // Jika ingin dipindahkan ke slot kosong
+                                string itemNameSrc = playerInventory.getItemNameAtIndex(indexSrc);
+                                itrTool = toolContainer.find(itemNameSrc);
+                                itrNonTool = nonToolContainer.find(itemNameSrc);
+                                if (itrTool != toolContainer.end()) {
+                                    int posBeforeMove = playerInventory.findPosForMOVE(itemNameSrc, slotIdSrc);
+                                    int posAfterMove = tableInventory.countOccurence(itemNameSrc, indexDest) + playerInventory.countOccurence(itemNameSrc);
+                                    int durability = itrTool->second.getDurabilityAtPos(posBeforeMove);
+                                    itrTool->second.removeDurabilityAtPos(posBeforeMove);
+                                    itrTool->second.insertDurabilityAtPos(posAfterMove, durability);
+                                }
+                                tableInventory.addQuantityAtIndex(indexDest, 1);
+                                tableInventory.setPtrItemAtIndex(indexDest, playerInventory.getPtrItemAtIndex(indexSrc));
+                                playerInventory.addQuantityAtIndex(indexSrc, -1);
+                                if (playerInventory.getQuantityAtIndex(indexSrc) == 0) {
                                     playerInventory.setPtrItemAtIndex(indexSrc, NULL);
+                                }
+                            } else {
+                                string itemNameDest = tableInventory.getItemNameAtIndex(indexDest);
+                                itrTool = toolContainer.find(itemNameDest);
+                                itrNonTool = nonToolContainer.find(itemNameDest);
+                                if (itrTool != toolContainer.end()) { // Jika item Tool yang akan ditumpuk
+                                    cout << "Item Tool tidak dapat ditumpuk!" << endl;
+                                } else { // Jika item NonTool yang akan ditumpuk
+                                    if (playerInventory.getItemIdAtIndex(indexSrc) != tableInventory.getItemIdAtIndex(indexDest)) { // Jika item berbeda
+                                        cout << "Item berbeda tidak dapat ditumpuk!" << endl;
+                                    } else {
+                                        tableInventory.addQuantityAtIndex(indexDest, 1);
+                                        playerInventory.addQuantityAtIndex(indexSrc, -1);
+                                        if (playerInventory.getQuantityAtIndex(indexSrc) == 0) { // Jika kosong setelah pemindahan
+                                            playerInventory.setPtrItemAtIndex(indexSrc, NULL);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        itemQty--;
+                        if (itemQty > 0) {
+                            cin >> slotIdDest;
+                        }
+                    }
+                } else {
+                    cout << "Id slot tidak valid!" << endl;
+                }
+            } else if (slotIdSrc[0] == 'C') { // Jika sumbernya dari slotCrafting
+                if (slotIdDest[0] == 'I') {
+                    int indexSrc = tableInventory.findIndexBySlotId(slotIdSrc);
+                    int indexDest = playerInventory.findIndexBySlotId(slotIdDest);
+                    if (tableInventory.isSlotEmptyAtIndex(indexSrc)) { // Jika sumbernya kosong
+                        cout << "Slot sumber kosong!" << endl;
+                    } else {
+                        string itemName = tableInventory.getItemNameAtIndex(indexSrc);
+                        itrTool = toolContainer.find(itemName);
+                        itrNonTool = nonToolContainer.find(itemName);
+                        if (itrTool != toolContainer.end()) { // Jika yang dipindahkan adalah item Tool
+                            if (playerInventory.isSlotEmptyAtIndex(indexDest)) {
+                                int posBeforeMove = tableInventory.countOccurence(itemName, indexSrc) + playerInventory.countOccurence(itemName) + 1;
+                                int posAfterMove = playerInventory.findPosForMOVE(itemName, slotIdDest);
+                                int durability = itrTool->second.getDurabilityAtPos(posBeforeMove);
+                                itrTool->second.removeDurabilityAtPos(posBeforeMove);
+                                itrTool->second.insertDurabilityAtPos(posAfterMove, durability);
+                                playerInventory.addQuantityAtIndex(indexDest, 1);
+                                playerInventory.setPtrItemAtIndex(indexDest, tableInventory.getPtrItemAtIndex(indexSrc));
+                                tableInventory.addQuantityAtIndex(indexSrc, -1);
+                                tableInventory.setPtrItemAtIndex(indexSrc, NULL);
+                            } else {
+                                cout << "Item Tool tidak dapat ditumpuk!" << endl;
+                            }
+                        } else { // Jika yang dipindahkan adalah item NonTool
+                            if (playerInventory.isSlotEmptyAtIndex(indexDest)) {
+                                playerInventory.setQuantityAtIndex(indexDest, tableInventory.getQuantityAtIndex(indexSrc));
+                                playerInventory.setPtrItemAtIndex(indexDest, tableInventory.getPtrItemAtIndex(indexSrc));
+                                tableInventory.setQuantityAtIndex(indexSrc, 0);
+                                tableInventory.setPtrItemAtIndex(indexSrc, NULL);
+                            } else {
+                                if (playerInventory.getItemNameAtIndex(indexDest) == itemName) {
+                                    int totalQtyDest = playerInventory.getQuantityAtIndex(indexDest) + tableInventory.getQuantityAtIndex(indexSrc) > MAX_CAP ?
+                                    MAX_CAP : playerInventory.getQuantityAtIndex(indexDest) + tableInventory.getQuantityAtIndex(indexSrc);
+                                    int totalQtySrc = playerInventory.getQuantityAtIndex(indexDest) + tableInventory.getQuantityAtIndex(indexSrc) > MAX_CAP ?
+                                    playerInventory.getQuantityAtIndex(indexDest) + tableInventory.getQuantityAtIndex(indexSrc)-MAX_CAP : 0;
+                                    playerInventory.setQuantityAtIndex(indexDest, totalQtyDest);
+                                    tableInventory.setQuantityAtIndex(indexSrc, totalQtySrc);
+                                    if (totalQtySrc == 0) {
+                                        tableInventory.setPtrItemAtIndex(indexSrc, NULL);
+                                    }
+                                } else {
+                                    cout << "Item berbeda tidak dapat ditumpuk!" << endl;
                                 }
                             }
                         }
@@ -459,8 +521,6 @@ int main() {
                 } else {
                     cout << "Id slot tidak valid!" << endl;
                 }
-            } else if (slotIdSrc[0] == 'C') { // Jika sumbernya dari slotCrafting
-                // TODO
             } else {
                 cout << "Id slot tidak valid!" << endl;
             }
@@ -516,7 +576,6 @@ int main() {
                     itemConfigFileOut << endl;
                 }
             }
-
         } 
         // Command CRAFT
         else if (command == "CRAFT") {
@@ -688,6 +747,9 @@ int main() {
         else if (command == "HELP") {
             cout << "EXIT: " << endl;
             // TODO
+        }
+        else if (command == "COUNT") {
+            cout << playerInventory.countOccurence("IRON_AXE") << endl;
         }
         // invalid command 
         else {

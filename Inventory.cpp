@@ -167,7 +167,7 @@ void Inventory::print() {
 int Inventory::countOccurence(string itemName){
     int count = 0;
     for (int i=0; i<MAX_SLOT; i++) {
-        if (this->slots[i].getPointerItem()->getName() == itemName) {
+        if (this->getItemNameAtIndex(i) == itemName) {
             count++;
         }
     }

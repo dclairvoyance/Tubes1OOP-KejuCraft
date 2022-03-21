@@ -23,7 +23,7 @@ public:
     int getCol(int id);                                     /* get col from id */
     Slot getSlot(int index);                                /* get slot[row][col] */
     SlotInventory getSlotInventory(int index);                      
-    bool isSlotEmpty(int row, int col);                     /* (opt) true if slot at index is empty */
+    bool isSlotEmptyAtIndex(int index);                     /* (opt) true if slot at index is empty */
     bool isSameItem(int index, Item* ptr);                  /* (opt) true if slot contains same item as ptr */
     void setPtrItem(int index, Item* ptr);                  /* (opt) set ptr item into slot[row][col] */
     void addPtrItem(int index, int quantity);
@@ -40,14 +40,17 @@ public:
     int getItemIdByCoord(int row, int col);
     string getItemNameByCoord(int row, int col);
     int getQuantityByCoord(int row, int col);
-    int findPosForTool(Inventory inv, int row, int col);
+    int countOccurence(string itemName, int index);
 
     int findIndexBySlotId(string slotIdDest);
     int getQuantityAtIndex(int index);
     string getItemNameAtIndex(int index);
     void setQuantityAtIndex(int index, int quantity);
+    void addQuantityAtIndex(int index, int quantity);
     void setPtrItemAtIndex(int index, Item* ptr);
-    int getItemIdAtIndex (int index);
+    int getItemIdAtIndex(int index);
+    string getSlotIdAtIndex(int index);
+    Item* getPtrItemAtIndex(int index);
 };
 
 #endif

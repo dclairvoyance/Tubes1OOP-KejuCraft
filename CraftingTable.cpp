@@ -37,8 +37,8 @@ SlotInventory CraftingTable::getSlotInventory(int index){
     return this->slots(getRow(index), getCol(index));
 }
 
-bool CraftingTable::isSlotEmpty(int row, int col) {
-    return this->slots(row, col).getPointerItem() == NULL;
+bool CraftingTable::isSlotEmptyAtIndex(int index) {
+    return this->getSlot(index).getPointerItem() == NULL;
 }
 
 bool CraftingTable::isSameItem(int index, Item* ptr) {
@@ -112,18 +112,14 @@ int CraftingTable::getQuantityByCoord(int row, int col) {
     return this->slots(row, col).getQuantity();
 }
 
-int CraftingTable::findPosForTool(Inventory inv, int row, int col) {
-    string itemName = this->getItemNameByCoord(row, col);
-    int count = inv.countOccurence(itemName);
-    string slotId = this->getSlotIdByCoord(row, col);
-    int index = 0;
-    while (index < MAX_ROW*MAX_COL && this->getSlotIdByCoord(row, col) != slotId) {
-        if (this->getItemNameByCoord(getRow(index), getCol(index)) == itemName) {
+int CraftingTable::countOccurence(string itemName, int indexDest) {
+    int count = 0;
+    for (int i=0; i<indexDest; i++) {
+        if (this->getItemNameAtIndex(i) == itemName) {
             count++;
         }
-        index++;
     }
-    return count+1;
+    return count;
 }
 
 int CraftingTable::findIndexBySlotId(string slotIdDest){
@@ -143,11 +139,18 @@ int CraftingTable::getQuantityAtIndex(int index){
 }
 
 string CraftingTable::getItemNameAtIndex(int index){
-    return this->slots(getRow(index), getCol(index)).getPointerItem()->getName();
+    if (this->getSlot(index).getPointerItem() == NULL) {
+        return "null";
+    }
+    return this->getSlot(index).getPointerItem()->getName();
 }
 
 void CraftingTable::setQuantityAtIndex(int index, int quantity){
     this->slots(getRow(index), getCol(index)).setQuantity(quantity);
+}
+
+void CraftingTable::addQuantityAtIndex(int index, int quantity){
+    this->slots(getRow(index), getCol(index)).addQuantity(quantity);
 }
 
 void CraftingTable::setPtrItemAtIndex(int index, Item* ptr){
@@ -156,4 +159,12 @@ void CraftingTable::setPtrItemAtIndex(int index, Item* ptr){
 
 int CraftingTable::getItemIdAtIndex (int index){
     return this->slots(getRow(index), getCol(index)).getPointerItem()->getId();
+}
+
+string CraftingTable::getSlotIdAtIndex(int index){
+    return this->slots(getRow(index), getCol(index)).getId();
+}
+
+Item* CraftingTable::getPtrItemAtIndex(int index) {
+    return this->getSlot(index).getPointerItem();
 }
