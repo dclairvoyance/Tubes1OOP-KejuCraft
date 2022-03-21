@@ -748,9 +748,6 @@ int main() {
             cout << "EXIT: " << endl;
             // TODO
         }
-        else if (command == "COUNT") {
-            cout << playerInventory.countOccurence("IRON_AXE") << endl;
-        }
         // invalid command 
         else {
             cout << "Invalid command" << endl;
