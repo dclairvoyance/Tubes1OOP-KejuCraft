@@ -14,15 +14,14 @@
 
 class CraftingTable {
 private:
-    Matrix<SlotInventory, MAX_ROW, MAX_COL> slots;  /* matrix of slot */
-    // SlotInventory slots[MAX_ROW][MAX_COL];
+    Matrix<Slot, MAX_ROW, MAX_COL> slots;  /* matrix of slot */
+    // Slot slots[MAX_ROW][MAX_COL];
 public:
-    CraftingTable();                                        /* default constructor */          /* copy constructor */
-    ~CraftingTable();                                       /* destructor */   /* assignment operator overloading */
+    CraftingTable();                                        /* default constructor */
+    ~CraftingTable();                                       /* destructor */
     int getRow(int id);                                     /* get row from id */
     int getCol(int id);                                     /* get col from id */
-    Slot getSlot(int index);                                /* get slot[row][col] */
-    SlotInventory getSlotInventory(int index);                      
+    Slot getSlot(int index);                                /* get slot[row][col] */                 
     bool isSlotEmptyAtIndex(int index);                     /* (opt) true if slot at index is empty */
     bool isSameItem(int index, Item* ptr);                  /* (opt) true if slot contains same item as ptr */
     void setPtrItem(int index, Item* ptr);                  /* (opt) set ptr item into slot[row][col] */

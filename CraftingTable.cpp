@@ -10,7 +10,7 @@ using namespace std;
 CraftingTable::CraftingTable() {
     for (int i = 0; i < MAX_ROW; i++) {
         for (int j = 0; j < MAX_COL; j++) {
-            this->slots(i, j) = SlotInventory();
+            this->slots(i, j) = Slot();
             string id = "C" + to_string(i*MAX_ROW + j);
             this->slots(i, j).setId(id);
         }
@@ -33,43 +33,39 @@ Slot CraftingTable::getSlot(int index){
     return this->slots(getRow(index), getCol(index));
 }
 
-SlotInventory CraftingTable::getSlotInventory(int index){
-    return this->slots(getRow(index), getCol(index));
-}
-
 bool CraftingTable::isSlotEmptyAtIndex(int index) {
-    return this->getSlot(index).getPointerItem() == NULL;
+    return this->slots(getRow(index), getCol(index)).getPointerItem() == NULL;
 }
 
 bool CraftingTable::isSameItem(int index, Item* ptr) {
-    return getSlot(index).getPointerItem() == ptr;
+    return this->slots(getRow(index), getCol(index)).getPointerItem() == ptr;
 }
 
 void CraftingTable::setPtrItem(int index, Item* ptr) {
-    getSlot(index).setPointerItem(ptr);
+    this->slots(getRow(index), getCol(index)).setPointerItem(ptr);
 }
 
 void CraftingTable::addPtrItem(int index, int quantity) {
     /* decrease quantity of container */
-    getSlot(index).getPointerItem()->addQuantity(-1 * quantity);
+    this->slots(getRow(index), getCol(index)).getPointerItem()->addQuantity(-1 * quantity);
     /* increase quantity of crafting slot */
-    getSlotInventory(index).addQuantity(quantity);
+    this->slots(getRow(index), getCol(index)).addQuantity(quantity);
 }
 
 void CraftingTable::discardPtrItem(int index, int quantity) {
     /* bisa jadi tidak mencukupi */
-    getSlotInventory(index).addQuantity(-1 * quantity);
-    getSlotInventory(index).getPointerItem()->addQuantity(quantity);
+    this->slots(getRow(index), getCol(index)).addQuantity(-1 * quantity);
+    this->slots(getRow(index), getCol(index)).getPointerItem()->addQuantity(quantity);
 }
 
 void CraftingTable::discardAllPtrItem(int index) { // atau diubah jadi quantity
     int quantityInSlot;
-    quantityInSlot = getSlotInventory(index).getQuantity();
+    quantityInSlot = this->slots(getRow(index), getCol(index)).getQuantity();
     discardPtrItem(index, quantityInSlot);
 }
 
 void CraftingTable::decPtrItem(int index, int quantity) {
-    getSlotInventory(index).addQuantity(-1 * quantity);
+    this->slots(getRow(index), getCol(index)).addQuantity(-1 * quantity);
 }
 
 /*
@@ -139,10 +135,10 @@ int CraftingTable::getQuantityAtIndex(int index){
 }
 
 string CraftingTable::getItemNameAtIndex(int index){
-    if (this->getSlot(index).getPointerItem() == NULL) {
+    if (this->slots(getRow(index), getCol(index)).getPointerItem() == NULL) {
         return "null";
     }
-    return this->getSlot(index).getPointerItem()->getName();
+    return this->slots(getRow(index), getCol(index)).getPointerItem()->getName();
 }
 
 void CraftingTable::setQuantityAtIndex(int index, int quantity){
@@ -166,5 +162,5 @@ string CraftingTable::getSlotIdAtIndex(int index){
 }
 
 Item* CraftingTable::getPtrItemAtIndex(int index) {
-    return this->getSlot(index).getPointerItem();
+    return this->slots(getRow(index), getCol(index)).getPointerItem();
 }

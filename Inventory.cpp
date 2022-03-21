@@ -5,7 +5,7 @@
 #include "Inventory.h"
 
 Inventory::Inventory() {
-    this->slots = new SlotInventory[MAX_SLOT];
+    this->slots = new Slot[MAX_SLOT];
     for (int i=0; i<MAX_SLOT; i++) {
         string id = "I" + to_string(i);
         this->slots[i].setId(id);
@@ -146,7 +146,7 @@ bool Inventory::isSlotEmptyAtIndex(int index) {
     return this->slots[index].getPointerItem() == NULL;
 }
 
-SlotInventory* Inventory::getSlots() {
+Slot* Inventory::getSlots() {
     return this->slots;
 }
 
