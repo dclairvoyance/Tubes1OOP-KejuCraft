@@ -29,7 +29,11 @@ int CraftingTable::getCol(int id){
     return id%3;
 }
 
-SlotInventory CraftingTable::getSlot(int index){
+Slot CraftingTable::getSlot(int index){
+    return this->slots(getRow(index), getCol(index));
+}
+
+SlotInventory CraftingTable::getSlotInventory(int index){
     return this->slots(getRow(index), getCol(index));
 }
 
@@ -49,23 +53,23 @@ void CraftingTable::addPtrItem(int index, int quantity) {
     /* decrease quantity of container */
     getSlot(index).getPointerItem()->addQuantity(-1 * quantity);
     /* increase quantity of crafting slot */
-    getSlot(index).addQuantity(quantity);
+    getSlotInventory(index).addQuantity(quantity);
 }
 
 void CraftingTable::discardPtrItem(int index, int quantity) {
     /* bisa jadi tidak mencukupi */
-    getSlot(index).addQuantity(-1 * quantity);
-    getSlot(index).getPointerItem()->addQuantity(quantity);
+    getSlotInventory(index).addQuantity(-1 * quantity);
+    getSlotInventory(index).getPointerItem()->addQuantity(quantity);
 }
 
 void CraftingTable::discardAllPtrItem(int index) { // atau diubah jadi quantity
     int quantityInSlot;
-    quantityInSlot = getSlot(index).getQuantity();
+    quantityInSlot = getSlotInventory(index).getQuantity();
     discardPtrItem(index, quantityInSlot);
 }
 
 void CraftingTable::decPtrItem(int index, int quantity) {
-    getSlot(index).addQuantity(-1 * quantity);
+    getSlotInventory(index).addQuantity(-1 * quantity);
 }
 
 /*
@@ -135,7 +139,7 @@ int CraftingTable::findIndexBySlotId(string slotIdDest){
 }
 
 int CraftingTable::getQuantityAtIndex(int index){
-    return this->slots(getRow(index), getCol(index)).getPointerItem()->getQuantity();
+    return this->slots(getRow(index), getCol(index)).getQuantity();
 }
 
 string CraftingTable::getItemNameAtIndex(int index){
@@ -143,7 +147,7 @@ string CraftingTable::getItemNameAtIndex(int index){
 }
 
 void CraftingTable::setQuantityAtIndex(int index, int quantity){
-    this->slots(getRow(index), getCol(index)).getPointerItem()->setQuantity(quantity);
+    this->slots(getRow(index), getCol(index)).setQuantity(quantity);
 }
 
 void CraftingTable::setPtrItemAtIndex(int index, Item* ptr){

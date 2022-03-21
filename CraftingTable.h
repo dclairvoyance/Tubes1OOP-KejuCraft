@@ -21,7 +21,8 @@ public:
     ~CraftingTable();                                       /* destructor */   /* assignment operator overloading */
     int getRow(int id);                                     /* get row from id */
     int getCol(int id);                                     /* get col from id */
-    SlotInventory getSlot(int index);                       /* get slot[row][col] */                      
+    Slot getSlot(int index);                                /* get slot[row][col] */
+    SlotInventory getSlotInventory(int index);                      
     bool isSlotEmpty(int row, int col);                     /* (opt) true if slot at index is empty */
     bool isSameItem(int index, Item* ptr);                  /* (opt) true if slot contains same item as ptr */
     void setPtrItem(int index, Item* ptr);                  /* (opt) set ptr item into slot[row][col] */

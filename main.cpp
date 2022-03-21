@@ -428,10 +428,8 @@ int main() {
                             int posAfterMove = 0;
                             cout << posAfterMove << endl;
                             int durability = itrTool->second.getDurabilityAtPos(posBeforeMove);
-                            cout << "yes" << endl;
                             itrTool->second.removeDurabilityAtPos(posBeforeMove);
                             itrTool->second.insertDurabilityAtPos(posAfterMove, durability);
-                            cout << "yes" << endl;
                         }
                         tableInventory.setQuantityAtIndex(indexDest, itemQty);
                         tableInventory.setPtrItemAtIndex(indexDest, playerInventory.getPtrItemAtIndex(indexSrc));
@@ -535,31 +533,34 @@ int main() {
                 }
             }
 
-            int maxWidth = 0;
-            for (int i = 0; i<MAX_ROW; i++){
+            int maxWidth = 0; // menentukan lebar maksimum di crafting table
+            for (int j = 0; j<MAX_COL; j++){
                 int tableWidth = 0;
-                for (int j = 0; j<MAX_COL; j++){
+                for (int i = 0; i<MAX_ROW; i++){
                     if (tableContent[i][j] != NULL){
-                        tableWidth++;
+                        tableWidth = 1;
                     }
                 }
-                if (tableWidth > maxWidth){
-                    maxWidth = tableWidth;
+                if (tableWidth == 1){
+                    maxWidth++;
                 }
             }
 
-            int maxHeight = 0;
-            for (int j = 0; j<MAX_COL; j++){
+            int maxHeight = 0; // menentukan tinggi maksimum di crafting table
+            for (int i = 0; i<MAX_ROW; i++){
                 int tableHeight = 0;
-                for (int i = 0; i<MAX_ROW; i++){
+                for (int j = 0; j<MAX_COL; j++){
                     if (tableContent[i][j] != NULL){
-                        tableHeight++;
+                        tableHeight = 1;
                     }
                 }
-                if (tableHeight > maxHeight){
-                    maxHeight = tableHeight;
+                if (tableHeight == 1){
+                    maxHeight++;
                 }
             }
+
+            cout << maxWidth << endl;
+            cout << maxHeight << endl;
 
             
             for (int i = 0; i<recipeCount; i++){
@@ -585,8 +586,6 @@ int main() {
 
                                     else if (tableResep[m][n] != tableContent[j+m][k+n]->getName() && tableResep[m][n] != tableContent[j+m][k+n]->getType()){
                                         isSame = 0;
-                                        cout << tableContent[j+m][k+n]->getName() << endl;
-                                        cout << tableContent[j+m][k+n]->getType() << endl;
                                     }
                                 }
                             }
@@ -597,14 +596,13 @@ int main() {
                                     for (int y = 0; y<MAX_COL; y++){
                                         if (tableInventory.getSlot(x*MAX_ROW + y).getPointerItem() != NULL){
                                             tableInventory.getSlot(x*MAX_ROW + y).getPointerItem()->addQuantity(-1);
-                                            cout << "yes" << endl;
+
                                             tableInventory.setQuantityAtIndex(x*MAX_ROW+y, 0);
                                             tableInventory.setPtrItemAtIndex(x*MAX_ROW+y, NULL);
-                                            cout << "yes" << endl;
+
                                         }
                                     }
                                 }
-                                cout << "yes" << endl;
 
                                 string itemName = recipeContainer[i].getOutput().getName();
                                 int itemQty = recipeContainer[i].getQuantity();
