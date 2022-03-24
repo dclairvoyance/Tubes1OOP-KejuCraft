@@ -734,8 +734,14 @@ int main() {
             cin >> exit;
         }
         else if (command == "HELP") {
-            cout << "EXIT: " << endl;
-            // TODO
+            cout << "SHOW - Show CraftingTable and Inventory" << endl;
+            cout << "GIVE <itemName> <amount> - Give amount of item to inventory" << endl;
+            cout << "DISCARD <slotId> <amount> - Discard amount of item from inventory" << endl;
+            cout << "MOVE <slotId1> <amount> <slotId2> - Move amount of item from slotId1 to slotId2" << endl;
+            cout << "USE <slotId> - Use item at slotId" << endl;
+            cout << "CRAFT - Craft item" << endl;
+            cout << "EXPORT - Export inventory to file" << endl;
+            cout << "EXIT - Exit program" << endl;
         }
         // invalid command 
         else {
