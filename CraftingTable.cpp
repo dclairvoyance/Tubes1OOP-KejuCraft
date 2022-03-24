@@ -33,7 +33,7 @@ Slot CraftingTable::getSlot(int index){
     return this->slots(getRow(index), getCol(index));
 }
 
-bool CraftingTable::isSlotEmptyAtIndex(int index) {
+bool CraftingTable::isSlotEmpty(int index) {
     return this->slots(getRow(index), getCol(index)).getPointerItem() == NULL;
 }
 
@@ -92,33 +92,33 @@ void CraftingTable::print() {
 
 /* opt: either put here or Slot.h */
 
-string CraftingTable::getSlotIdByCoord(int row, int col) {
+string CraftingTable::getSlotId(int row, int col) {
     return this->slots(row, col).getId();
 }
 
-int CraftingTable::getItemIdByCoord(int row, int col) {
+int CraftingTable::getItemId(int row, int col) {
     return this->slots(row, col).getPointerItem()->getId();
 }
 
-string CraftingTable::getItemNameByCoord(int row, int col) {
+string CraftingTable::getItemName(int row, int col) {
     return this->slots(row, col).getPointerItem()->getName();
 }
 
-int CraftingTable::getQuantityByCoord(int row, int col) {
+int CraftingTable::getQuantity(int row, int col) {
     return this->slots(row, col).getQuantity();
 }
 
 int CraftingTable::countOccurence(string itemName, int indexDest) {
     int count = 0;
     for (int i=0; i<indexDest; i++) {
-        if (this->getItemNameAtIndex(i) == itemName) {
+        if (this->getItemName(i) == itemName) {
             count++;
         }
     }
     return count;
 }
 
-int CraftingTable::findIndexBySlotId(string slotIdDest){
+int CraftingTable::findIndex(string slotIdDest){
     for (int i = 0; i<MAX_ROW; i++){
         for (int j = 0; j<MAX_COL; j++){
             string idSlots = this->slots(i,j).getId();
@@ -130,37 +130,33 @@ int CraftingTable::findIndexBySlotId(string slotIdDest){
     return -1; 
 }
 
-int CraftingTable::getQuantityAtIndex(int index){
+int CraftingTable::getQuantity(int index){
     return this->slots(getRow(index), getCol(index)).getQuantity();
 }
 
-string CraftingTable::getItemNameAtIndex(int index){
+string CraftingTable::getItemName(int index){
     if (this->slots(getRow(index), getCol(index)).getPointerItem() == NULL) {
         return "null";
     }
     return this->slots(getRow(index), getCol(index)).getPointerItem()->getName();
 }
 
-void CraftingTable::setQuantityAtIndex(int index, int quantity){
+void CraftingTable::setQuantity(int index, int quantity){
     this->slots(getRow(index), getCol(index)).setQuantity(quantity);
 }
 
-void CraftingTable::addQuantityAtIndex(int index, int quantity){
+void CraftingTable::addQuantity(int index, int quantity){
     this->slots(getRow(index), getCol(index)).addQuantity(quantity);
 }
 
-void CraftingTable::setPtrItemAtIndex(int index, Item* ptr){
-    this->slots(getRow(index), getCol(index)).setPointerItem(ptr);
-}
-
-int CraftingTable::getItemIdAtIndex (int index){
+int CraftingTable::getItemId(int index){
     return this->slots(getRow(index), getCol(index)).getPointerItem()->getId();
 }
 
-string CraftingTable::getSlotIdAtIndex(int index){
+string CraftingTable::getSlotId(int index){
     return this->slots(getRow(index), getCol(index)).getId();
 }
 
-Item* CraftingTable::getPtrItemAtIndex(int index) {
+Item* CraftingTable::getPtrItem(int index) {
     return this->slots(getRow(index), getCol(index)).getPointerItem();
 }

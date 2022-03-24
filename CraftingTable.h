@@ -22,34 +22,29 @@ public:
     int getRow(int id);                                     /* get row from id */
     int getCol(int id);                                     /* get col from id */
     Slot getSlot(int index);                                /* get slot[row][col] */                 
-    bool isSlotEmptyAtIndex(int index);                     /* (opt) true if slot at index is empty */
+    bool isSlotEmpty(int index);                            /* (opt) true if slot at index is empty */
     bool isSameItem(int index, Item* ptr);                  /* (opt) true if slot contains same item as ptr */
+    Item* getPtrItem(int index);
     void setPtrItem(int index, Item* ptr);                  /* (opt) set ptr item into slot[row][col] */
     void addPtrItem(int index, int quantity);
     void discardPtrItem(int index, int quantity);
     void discardAllPtrItem(int index);                      /* (opt) discard ptr item from slot[row][col] (used with GIVE) */
     void decPtrItem(int index, int quantity);               /* (opt) decrease ptr item (used in CRAFT) */
     bool checkCraft();                                      /* (main) check if combination is craftable */
-    Item* craft();                                          /* (main) craft to crafted item */
-    void resetCraftingTable();                              /* empty all slots of crafting table */
-    void print();                                           /* print info */
-    /* opt: either put here or Slot.h */
-
-    string getSlotIdByCoord(int row, int col);
-    int getItemIdByCoord(int row, int col);
-    string getItemNameByCoord(int row, int col);
-    int getQuantityByCoord(int row, int col);
+    void resetCraftingTable();                              /* empty all slots of crafting table */                                           /* print info */
+    string getSlotId(int row, int col);
+    int getItemId(int row, int col);
     int countOccurence(string itemName, int index);
-
-    int findIndexBySlotId(string slotIdDest);
-    int getQuantityAtIndex(int index);
-    string getItemNameAtIndex(int index);
-    void setQuantityAtIndex(int index, int quantity);
-    void addQuantityAtIndex(int index, int quantity);
-    void setPtrItemAtIndex(int index, Item* ptr);
-    int getItemIdAtIndex(int index);
-    string getSlotIdAtIndex(int index);
-    Item* getPtrItemAtIndex(int index);
+    int findIndex(string slotIdDest);
+    int getQuantity(int index);
+    int getQuantity(int row, int col);
+    void setQuantity(int index, int quantity);
+    void addQuantity(int index, int quantity);
+    string getItemName(int index);
+    string getItemName(int row, int col);
+    int getItemId(int index);
+    string getSlotId(int index);
+    void print();
 };
 
 #endif

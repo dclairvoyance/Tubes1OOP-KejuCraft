@@ -49,7 +49,7 @@ int Inventory::findIndexEmpty() {
     return -1;
 }
 
-int Inventory::findIndexItem(Item* ptr) {
+int Inventory::findIndex(Item* ptr) {
     for (int i=0; i<MAX_SLOT; i++) {
         if (this->slots[i].getPointerItem() == ptr && this->slots[i].getQuantity() < 64) {
             return i;
@@ -58,7 +58,7 @@ int Inventory::findIndexItem(Item* ptr) {
     return -1;
 }
 
-int Inventory::findIndexBySlotId(string id) {
+int Inventory::findIndex(string id) {
     for (int i=0; i<MAX_SLOT; i++) {
         if (this->slots[i].getId() == id) {
             return i;
@@ -70,10 +70,10 @@ int Inventory::findIndexBySlotId(string id) {
 int Inventory::findPosForGIVE(string itemName) {
     int count = 0;
     for (int i=0; i<MAX_SLOT; i++) {
-        if (this->getPtrItemAtIndex(i) == NULL) {
+        if (this->getPtrItem(i) == NULL) {
             count++;
             return count;
-        } else if (this->getItemNameAtIndex(i) == itemName) {
+        } else if (this->getItemName(i) == itemName) {
             count++;
         }
     }
@@ -84,7 +84,7 @@ int Inventory::findPosForMOVE(string itemName, string slotId) {
     int count = 0;
     int index = 0;
     while (this->slots[index].getId() != slotId) {
-        if (this->getItemNameAtIndex(index) == itemName) {
+        if (this->getItemName(index) == itemName) {
             count++;
         }
         index++;
@@ -96,7 +96,7 @@ int Inventory::findPosAfterMOVE(string itemName, string slotIdSrc, string slotId
     int count = 0;
     int index = 0;
     while (this->slots[index].getId() != slotIdDest) {
-        if (this->getItemNameAtIndex(index) == itemName && this->getSlotIdAtIndex(index) != slotIdSrc) {
+        if (this->getItemName(index) == itemName && this->getSlotId(index) != slotIdSrc) {
             count++;
         }
         index++;
@@ -104,45 +104,45 @@ int Inventory::findPosAfterMOVE(string itemName, string slotIdSrc, string slotId
     return count+1;
 }
 
-int Inventory::getItemIdAtIndex(int index) {
-    if (this->getPtrItemAtIndex(index) == NULL) {
+int Inventory::getItemId(int index) {
+    if (this->getPtrItem(index) == NULL) {
         return 0;
     }
-    return this->getPtrItemAtIndex(index)->getId();
+    return this->getPtrItem(index)->getId();
 }
 
-int Inventory::getQuantityAtIndex(int index) {
+int Inventory::getQuantity(int index) {
     return this->slots[index].getQuantity();
 }
 
-string Inventory::getItemNameAtIndex(int index) {
-    if (this->getPtrItemAtIndex(index) == NULL) {
+string Inventory::getItemName(int index) {
+    if (this->getPtrItem(index) == NULL) {
         return "null";
     }
-    return this->getPtrItemAtIndex(index)->getName();
+    return this->getPtrItem(index)->getName();
 }
 
-Item* Inventory::getPtrItemAtIndex(int index) {
+Item* Inventory::getPtrItem(int index) {
     return this->slots[index].getPointerItem();
 }
 
-string Inventory::getSlotIdAtIndex(int index) {
+string Inventory::getSlotId(int index) {
     return this->slots[index].getId();
 }
 
-void Inventory::addQuantityAtIndex(int index, int quantity) {
+void Inventory::addQuantity(int index, int quantity) {
     this->slots[index].addQuantity(quantity);
 }
 
-void Inventory::setQuantityAtIndex(int index, int quantity) {
+void Inventory::setQuantity(int index, int quantity) {
     this->slots[index].setQuantity(quantity);
 }
 
-void Inventory::setPtrItemAtIndex(int index, Item* ptr) {
+void Inventory::setPtrItem(int index, Item* ptr) {
     this->slots[index].setPointerItem(ptr);
 }
 
-bool Inventory::isSlotEmptyAtIndex(int index) {
+bool Inventory::isSlotEmpty(int index) {
     return this->slots[index].getPointerItem() == NULL;
 }
 
@@ -153,8 +153,8 @@ Slot* Inventory::getSlots() {
 void Inventory::print() {
     for (int i=0; i<MAX_SLOT; i++) {
         cout << "[" << this->slots[i].getId() << " ";
-        if (this->getPtrItemAtIndex(i) != NULL) {
-            cout << this->getItemIdAtIndex(i) << " ";
+        if (this->getPtrItem(i) != NULL) {
+            cout << this->getItemId(i) << " ";
         } 
         cout << this->slots[i].getQuantity() << "] ";
 
@@ -167,7 +167,7 @@ void Inventory::print() {
 int Inventory::countOccurence(string itemName){
     int count = 0;
     for (int i=0; i<MAX_SLOT; i++) {
-        if (this->getItemNameAtIndex(i) == itemName) {
+        if (this->getItemName(i) == itemName) {
             count++;
         }
     }
