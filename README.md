@@ -22,23 +22,16 @@ Repository ini berisi
 - check.cpp, berisi source code checking
 - makefile, untuk compiling and testing
 
-## Requirements
-- OS Windows
-- C++17
-
 ## Running the Program
-To compile, run this command:
-```
-make compile
-```
 To start the program, run this command:
 ```
+make compile
 ./main
 ```
-Make sure .out files are in tests folder.\
-To run the test, run this command:
+Make sure you are using Linux with C++17. WSL also works if you are using Windows.
+To start the testing, run this command:
 ```
-make check
+make all
 ```
 
 ## Who's Behind
