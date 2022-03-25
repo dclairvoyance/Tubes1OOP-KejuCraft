@@ -59,12 +59,10 @@ int Inventory::findIndex(Item* ptr) {
 }
 
 int Inventory::findIndex(string id) {
-    for (int i=0; i<MAX_SLOT; i++) {
-        if (this->slots[i].getId() == id) {
-            return i;
-        }
+    if (stoi(id.substr(1)) < 0 || stoi(id.substr(1)) >= MAX_SLOT) {
+        return -1;
     }
-    return -1;
+    return stoi(id.substr(1));
 }
 
 int Inventory::findPosForGIVE(string itemName) {

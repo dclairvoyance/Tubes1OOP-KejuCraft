@@ -59,7 +59,7 @@ int main() {
 
     // Menyelesaikan pembacaan file item config
     itemConfigFile.close();
-    cout << "EOF reached.." << endl;
+    cout << "Item config readed.." << endl;
 
     // BAGIAN II: Membaca Recipe
     // Menghitung banyak recipe
@@ -75,63 +75,61 @@ int main() {
     // Mengisi setiap CraftingRecipe
     for (const auto &entry : filesystem::directory_iterator(configPath + "/recipe")) {
         string recipeConfigPath = entry.path().string();
-        // cout << recipeConfigPath << endl;
         ifstream recipeConfigFile(recipeConfigPath);
-        bool isDone = false;
-        while (isDone == false){
-            // Membaca baris pertama (ROW COL)
-            getline(recipeConfigFile, intext);
-            stringstream ss(intext);
-            int row, col, quantity;
-            string itemCraft;
-            string itemName;
-            Item itemNameResult;
-            ss >> row >> col;
-            
-            // Menyiapkan container untuk string
-            string** resep = new string* [row];
-            for (int i = 0; i<row; i++){
-                resep[i] = new string[col];
-            }
-
-            // Membaca dan meletakkan resep crafting dalam container string
-            for (int i = 0; i<row; i++){
-                getline(recipeConfigFile, intext);
-                stringstream ss2(intext);
-                for (int j = 0; j<col; j++){
-                    ss2 >> itemCraft;
-                    resep[i][j] = itemCraft;
-                }
-            }
-
-            // Membaca baris terakhir (hasil crafting)
-            getline(recipeConfigFile, intext);
-            stringstream ss3(intext);
-            ss3 >> itemName;
-            ss3 >> quantity;
-
-            // Mencari nama dari itemName nonTool untuk diletakkan dalam atribut CraftingRecipe
-            for (itrNonTool = nonToolContainer.begin(); itrNonTool!=nonToolContainer.end(); itrNonTool++){
-                if (itrNonTool->first == itemName){
-                    itemNameResult = itrNonTool->second;
-                }
-            }
-
-            // Mencari nama dari itemName Tool untuk diletakkan dalam atribut CraftingRecipe
-            for (itrTool = toolContainer.begin(); itrTool!=toolContainer.end(); itrTool++){
-                if (itrTool->first == itemName){
-                    itemNameResult = itrTool->second;
-                }
-            }
-
-            // Meletakkan recipe dalam CraftingRecipe
-            CraftingRecipe finalrecipe(row,col,resep,itemNameResult,quantity);
-            recipeContainer[recipeLocation] = finalrecipe;
-            recipeLocation++;
-            isDone = true;
-            
+        
+        // Membaca baris pertama (ROW COL)
+        getline(recipeConfigFile, intext);
+        stringstream ss(intext);
+        int row, col, quantity;
+        string itemCraft;
+        string itemName;
+        Item itemNameResult;
+        ss >> row >> col;
+        
+        // Menyiapkan container untuk string
+        string** resep = new string* [row];
+        for (int i = 0; i<row; i++){
+            resep[i] = new string[col];
         }
+        
+        // Membaca dan meletakkan resep crafting dalam container string
+        for (int i = 0; i<row; i++){
+            getline(recipeConfigFile, intext);
+            stringstream ss2(intext);
+            for (int j = 0; j<col; j++){
+                ss2 >> itemCraft;
+                resep[i][j] = itemCraft;
+            }
+        }
+
+        // Membaca baris terakhir (hasil crafting)
+        getline(recipeConfigFile, intext);
+        stringstream ss3(intext);
+        ss3 >> itemName;
+        ss3 >> quantity;
+        // Mencari nama dari itemName nonTool untuk diletakkan dalam atribut CraftingRecipe
+        for (itrNonTool = nonToolContainer.begin(); itrNonTool!=nonToolContainer.end(); itrNonTool++){
+            if (itrNonTool->first == itemName){
+                itemNameResult = itrNonTool->second;
+            }
+        }
+
+        // Mencari nama dari itemName Tool untuk diletakkan dalam atribut CraftingRecipe
+        for (itrTool = toolContainer.begin(); itrTool!=toolContainer.end(); itrTool++){
+            if (itrTool->first == itemName){
+                itemNameResult = itrTool->second;
+            }
+        }
+
+        // Meletakkan recipe dalam CraftingRecipe
+        CraftingRecipe finalrecipe(row,col,resep,itemNameResult,quantity);
+        recipeContainer[recipeLocation] = finalrecipe;
+        recipeLocation++;
     }
+
+    cout << "Recipe config readed.." << endl;
+
+    // 
 
     // BAGIAN III: Meng-handle Command
     string command;
@@ -195,8 +193,7 @@ int main() {
                 } 
                 // tidak ada item pada slot
                 else {
-                    printBetter(playerInventory.getItemId(i));
-                    cout << playerInventory.getItemId(i) << " ";
+                    cout << " 0 ";
                     printBetter(playerInventory.getQuantity(i));
                     cout << playerInventory.getQuantity(i);
                 }
@@ -226,7 +223,7 @@ int main() {
                 }
                 // Jika tidak ada slot kosong tersisa 
                 if (itemQty > 0) {
-                    cout << "Inventory penuh!" << endl;
+                    cout << "Inventory is full!" << endl;
                 }
             } else if (itrNonTool != nonToolContainer.end()) { // Jika tipe item NonTool
                 // Temukan semua slot yang berisi item ini
@@ -262,10 +259,10 @@ int main() {
                 }
                 // Jika sudah tidak ada slot kosong
                 if (itemQty > 0) {
-                    cout << "Inventory penuh!" << endl;
+                    cout << "Inventory is full!" << endl;
                 }
             } else { // Jika tidak ditemukan diantara keduanya
-                cout << "Tidak ditemukan nama tersebut sehingga tidak dapat menambahkan item ke inventory" << endl;
+                cout << "Item not found!" << endl;
             }
         } 
         // Command DISCARD
@@ -277,8 +274,10 @@ int main() {
             string itemName = playerInventory.getItemName(index);
             itrTool = toolContainer.find(itemName);
             itrNonTool = nonToolContainer.find(itemName);
-            if (playerInventory.getQuantity(index) < itemQty) {
-                cout << "Item tidak mencukupi" << endl;
+            if (index == -1) {
+                cout << "Invalid slot id!" << endl;
+            } else if (playerInventory.getQuantity(index) < itemQty) {
+                cout << "Not enough item!" << endl;
             } else { // Jika item cukup untuk dihapus
                 // Mengurangi quantity di container
                 if (itrTool != toolContainer.end()) {
@@ -292,6 +291,7 @@ int main() {
                 if (playerInventory.getQuantity(index) == 0) { // Jika habis, hapus pointer item
                     playerInventory.setPtrItem(index, NULL);
                 }
+                cout << "Item discarded!" << endl;
             }
         } 
         // Command MOVE
@@ -304,8 +304,10 @@ int main() {
                 if (slotIdDest[0] == 'I') { // Jika tujuannya ke slotInventory
                     int indexSrc = playerInventory.findIndex(slotIdSrc);
                     int indexDest = playerInventory.findIndex(slotIdDest);
-                    if (playerInventory.isSlotEmpty(indexSrc)) {
-                        cout << "Slot sumber kosong!" << endl;
+                    if (indexSrc == -1 || indexDest == -1) {
+                        cout << "Invalid slot id!" << endl;
+                    } else if (playerInventory.isSlotEmpty(indexSrc)) {
+                        cout << "Slot is empty!" << endl;
                     } else {
                         string itemName = playerInventory.getItemName(indexSrc);
                         itrTool = toolContainer.find(itemName);
@@ -321,8 +323,9 @@ int main() {
                                 playerInventory.setPtrItem(indexDest, playerInventory.getPtrItem(indexSrc));
                                 playerInventory.setQuantity(indexSrc, 0);
                                 playerInventory.setPtrItem(indexSrc, NULL);
+                                cout << "Item moved!" << endl;
                             } else {
-                                cout << "Item Tool tidak dapat ditumpuk!" << endl;
+                                cout << "Tool items cannot be stacked!" << endl;
                             }
                         } else {
                             if (playerInventory.isSlotEmpty(indexDest)) {
@@ -330,6 +333,7 @@ int main() {
                                 playerInventory.setPtrItem(indexDest, playerInventory.getPtrItem(indexSrc));
                                 playerInventory.setQuantity(indexSrc, 0);
                                 playerInventory.setPtrItem(indexSrc, NULL);
+                                cout << "Item moved!" << endl;
                             } else {
                                 if (playerInventory.getItemName(indexDest) == itemName) {
                                     int itemQtySrc = playerInventory.getQuantity(indexSrc);
@@ -341,19 +345,22 @@ int main() {
                                     if (playerInventory.getQuantity(indexSrc) == 0) { // Jika kosong setelah pemindahan
                                         playerInventory.setPtrItem(indexSrc, NULL);
                                     }
+                                    cout << "Item moved!" << endl;
                                 } else {
-                                    cout << "Item berbeda tidak dapat ditumpuk!" << endl;
+                                    cout << "Different items cannot be stacked!" << endl;
                                 }
                             }
                         }
                     }
                 } else if (slotIdDest[0] == 'C') { // Jika tujuannya ke slotCrafting
                     int indexSrc = playerInventory.findIndex(slotIdSrc);
+                    int indexDest = tableInventory.findIndex(slotIdDest);
                     while (itemQty > 0) {
-                        if (playerInventory.isSlotEmpty(indexSrc)) {
-                            cout << "Slot sumber kosong!" << endl;
+                        if (indexSrc == -1 || indexDest == -1) {
+                            cout << "Invalid slot id!" << endl;
+                        } else if (playerInventory.isSlotEmpty(indexSrc)) {
+                            cout << "Slot is empty!" << endl;
                         } else {
-                            int indexDest = tableInventory.findIndex(slotIdDest);
                             int itemQtyDest = tableInventory.getQuantity(indexDest);
                             if (itemQtyDest == 0) { // Jika ingin dipindahkan ke slot kosong
                                 string itemNameSrc = playerInventory.getItemName(indexSrc);
@@ -372,21 +379,23 @@ int main() {
                                 if (playerInventory.getQuantity(indexSrc) == 0) {
                                     playerInventory.setPtrItem(indexSrc, NULL);
                                 }
+                                cout << "Item moved!" << endl;
                             } else {
                                 string itemNameDest = tableInventory.getItemName(indexDest);
                                 itrTool = toolContainer.find(itemNameDest);
                                 itrNonTool = nonToolContainer.find(itemNameDest);
                                 if (itrTool != toolContainer.end()) { // Jika item Tool yang akan ditumpuk
-                                    cout << "Item Tool tidak dapat ditumpuk!" << endl;
+                                    cout << "Tool items cannot be stacked!" << endl;
                                 } else { // Jika item NonTool yang akan ditumpuk
                                     if (playerInventory.getItemId(indexSrc) != tableInventory.getItemId(indexDest)) { // Jika item berbeda
-                                        cout << "Item berbeda tidak dapat ditumpuk!" << endl;
+                                        cout << "Different items cannot be stacked!" << endl;
                                     } else {
                                         tableInventory.addQuantity(indexDest, 1);
                                         playerInventory.addQuantity(indexSrc, -1);
                                         if (playerInventory.getQuantity(indexSrc) == 0) { // Jika kosong setelah pemindahan
                                             playerInventory.setPtrItem(indexSrc, NULL);
                                         }
+                                        cout << "Item moved!" << endl;
                                     }
                                 }
                             }
@@ -397,14 +406,16 @@ int main() {
                         }
                     }
                 } else {
-                    cout << "Id slot tidak valid!" << endl;
+                    cout << "Invalid slot id!" << endl;
                 }
             } else if (slotIdSrc[0] == 'C') { // Jika sumbernya dari slotCrafting
                 if (slotIdDest[0] == 'I') {
                     int indexSrc = tableInventory.findIndex(slotIdSrc);
                     int indexDest = playerInventory.findIndex(slotIdDest);
-                    if (tableInventory.isSlotEmpty(indexSrc)) { // Jika sumbernya kosong
-                        cout << "Slot sumber kosong!" << endl;
+                    if (indexSrc == -1 || indexDest == -1) {
+                        cout << "Invalid slot id!" << endl;
+                    } else if (tableInventory.isSlotEmpty(indexSrc)) { // Jika sumbernya kosong
+                        cout << "Slot is empty!" << endl;
                     } else {
                         string itemName = tableInventory.getItemName(indexSrc);
                         itrTool = toolContainer.find(itemName);
@@ -420,8 +431,9 @@ int main() {
                                 playerInventory.setPtrItem(indexDest, tableInventory.getPtrItem(indexSrc));
                                 tableInventory.addQuantity(indexSrc, -1);
                                 tableInventory.setPtrItem(indexSrc, NULL);
+                                cout << "Item moved!" << endl;
                             } else {
-                                cout << "Item Tool tidak dapat ditumpuk!" << endl;
+                                cout << "Tool items cannot be stacked!" << endl;
                             }
                         } else { // Jika yang dipindahkan adalah item NonTool
                             if (playerInventory.isSlotEmpty(indexDest)) {
@@ -429,6 +441,7 @@ int main() {
                                 playerInventory.setPtrItem(indexDest, tableInventory.getPtrItem(indexSrc));
                                 tableInventory.setQuantity(indexSrc, 0);
                                 tableInventory.setPtrItem(indexSrc, NULL);
+                                cout << "Item moved!" << endl;
                             } else {
                                 if (playerInventory.getItemName(indexDest) == itemName) {
                                     int totalQtyDest = playerInventory.getQuantity(indexDest) + tableInventory.getQuantity(indexSrc) > MAX_CAP ?
@@ -440,17 +453,18 @@ int main() {
                                     if (totalQtySrc == 0) {
                                         tableInventory.setPtrItem(indexSrc, NULL);
                                     }
+                                    cout << "Item moved!" << endl;
                                 } else {
-                                    cout << "Item berbeda tidak dapat ditumpuk!" << endl;
+                                    cout << "Different items cannot be stacked!" << endl;
                                 }
                             }
                         }
                     }
                 } else {
-                    cout << "Id slot tidak valid!" << endl;
+                    cout << "Invalid slot id!" << endl;
                 }
             } else {
-                cout << "Id slot tidak valid!" << endl;
+                cout << "Invalid slot id!" << endl;
             }
         } 
         // Command USE
@@ -459,9 +473,9 @@ int main() {
             cin >> inventorySlotId;
             int index = playerInventory.findIndex(inventorySlotId);
             if (index == -1) {
-                cout << "Id slot tidak valid!" << endl;
+                cout << "Invalid slot id!" << endl;
             } else if (playerInventory.getPtrItem(index) == NULL) {
-                cout << "Tidak ada item di slot!" << endl;
+                cout << "Slot is empty!" << endl;
             } else {
                 string itemName = playerInventory.getItemName(index);
                 itrTool = toolContainer.find(itemName);
@@ -474,8 +488,9 @@ int main() {
                         playerInventory.addQuantity(index, -1); // kurangi quantity di slot
                         playerInventory.setPtrItem(index, NULL);
                     }
+                    cout << "Item used!" << endl;
                 } else {
-                    cout << "Item NonTool tidak dapat digunakan!" << endl;
+                    cout << "NonTool items cannot be used!" << endl;
                 }
             }
         } 
@@ -506,6 +521,7 @@ int main() {
                     itemConfigFileOut << endl;
                 }
             }
+            cout << "Export success!" << endl;
         } 
         // Command CRAFT
         else if (command == "CRAFT") {
@@ -620,7 +636,7 @@ int main() {
                                             index = playerInventory.findIndexEmpty();
                                         }
                                         if (itemQty > 0) {
-                                            cout << "Inventory penuh!" << endl;
+                                            cout << "Inventory is full!" << endl;
                                         }
                                     } else if ( itrNonTool != nonToolContainer.end() ) { // Jika tipe item NonTool
                                         // Temukan semua slot yang berisi item ini
@@ -656,7 +672,7 @@ int main() {
                                         }
                                         // Jika sudah tidak ada slot kosong
                                         if (itemQty > 0) {
-                                            cout << "Inventory penuh!" << endl;
+                                            cout << "Inventory is full!" << endl;
                                         }
                                     }
                                     i = recipeCount;
@@ -715,23 +731,17 @@ int main() {
                         }
                         // Jika tidak ada slot kosong tersisa 
                         if (itemQtyCraft > 0) {
-                            cout << "Inventory penuh!" << endl;
+                            cout << "Inventory is full!" << endl;
                         }
                         break;
                     }
                 }
             }
             if (isCrafted == 1){
-                cout << "item crafted" << endl;
+                cout << "Item crafted!" << endl;
             } else {
-                cout << "no item can be crafted" << endl;
+                cout << "No item can be crafted!" << endl;
             }
-        }
-        else if (command == "EXIT") {
-            char exit;
-            cout << "To exit and export, type 'Y'" << endl;;
-            cout << "To exit without export, ";
-            cin >> exit;
         }
         else if (command == "HELP") {
             cout << "SHOW - Show CraftingTable and Inventory" << endl;
@@ -741,11 +751,10 @@ int main() {
             cout << "USE <slotId> - Use item at slotId" << endl;
             cout << "CRAFT - Craft item" << endl;
             cout << "EXPORT - Export inventory to file" << endl;
-            cout << "EXIT - Exit program" << endl;
         }
         // invalid command 
         else {
-            cout << "Invalid command" << endl;
+            cout << "Invalid command!" << endl;
         }
     }
 

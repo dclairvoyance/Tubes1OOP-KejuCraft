@@ -68,29 +68,11 @@ void CraftingTable::decPtrItem(int index, int quantity) {
     this->slots(getRow(index), getCol(index)).addQuantity(-1 * quantity);
 }
 
-/*
-bool CraftingTable::checkCraft() {
-    return ;
-}
-
-Item* CraftingTable::craft() {
-    return ;
-}
-*/
-
 void CraftingTable::resetCraftingTable() {
     for (int i = 0; i < MAX_ROW*MAX_COL; i++) {
         discardAllPtrItem(i);
     }
 }
-
-/*
-void CraftingTable::print() {
-
-}
-*/
-
-/* opt: either put here or Slot.h */
 
 string CraftingTable::getSlotId(int row, int col) {
     return this->slots(row, col).getId();
@@ -119,15 +101,10 @@ int CraftingTable::countOccurence(string itemName, int indexDest) {
 }
 
 int CraftingTable::findIndex(string slotIdDest){
-    for (int i = 0; i<MAX_ROW; i++){
-        for (int j = 0; j<MAX_COL; j++){
-            string idSlots = this->slots(i,j).getId();
-            if (slotIdDest == idSlots){
-                return (i*MAX_ROW + j);
-            }
-        }
+    if (stoi(slotIdDest.substr(1)) < 0 || stoi(slotIdDest.substr(1)) >= MAX_ROW*MAX_COL) {
+        return -1;
     }
-    return -1; 
+    return stoi(slotIdDest.substr(1)); 
 }
 
 int CraftingTable::getQuantity(int index){
