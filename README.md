@@ -1,6 +1,17 @@
 # KejuCraft
 
-Repository untuk Tugas Besar I IF2210 2021/2022.
+> Repository untuk Tugas Besar I IF2210 2021/2022.
+
+## Description
+Program ini merupakan sebuah aplikasi game yang terinspirasi dari Minecraft. Pemain dapat melakukan crafting dari item yang dimilikinya di inventory berdasarkan resep yang telah ditentukan. Terdapat beberapa command yang dapat digunakan oleh pemain, yaitu
+- SHOW
+- GIVE
+- DISCARD
+- MOVE
+- USE
+- CRAFT
+- EXPORT
+- HELP
 
 ## What's Inside
 Repository ini berisi
@@ -11,17 +22,30 @@ Repository ini berisi
 - check.cpp, berisi source code checking
 - makefile, untuk compiling and testing
 
-## Running the Makefile
-Make sure you are using Linux with C++17. WSL also works if you are using Windows.
+## Requirements
+- OS Windows
+- C++17
+
+## Running the Program
+To compile, run this command:
 ```
-sudo apt-get install make g++
-make all
+make compile
 ```
-Using the sample main file, it should return that 1 out of 2 tests passed.
+To start the program, run this command:
+```
+./main
+```
+Make sure .out files are in tests folder.\
+To run the test, run this command:
+```
+make check
+```
 
 ## Who's Behind
-- Diky Restu Maulana (13520017)
-- William Manuel Kurniawan (13520020)
-- Damianus Clairvoyance Diva Putra (13520035)
-- Shadiq Harwiz (13520038)
-- Azmi Alfatih Shalahuddin (13520158)
+| NIM      | Nama                             |
+|----------|----------------------------------|
+| 13520017 | Diky Restu Maulana               |
+| 13520020 | William Manuel Kurniawan         |
+| 13520035 | Damianus Clairvoyance Diva Putra |
+| 13520038 | Shadiq Harwiz                    |
+| 13520158 | Azmi Alfatih Shalahuddin         |
