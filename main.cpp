@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <map>
 #include <string>
+#include <windows.h>
 #include "Item.h"
 #include "Inventory.h"
 #include "Slot.h"
@@ -19,15 +20,19 @@ void printBetter(int index) {
 }
 
 int main() {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, 10);
     cout << "**   ** ********      ** **     **   ******  *******       **     ******** **********" << endl;
     cout << "/**  ** /**/////      /**/**    /**  **////**/**////**     ****   /**///// /////**///" << endl;
     cout << "/** **  /**           /**/**    /** **    // /**   /**    **//**  /**          /**   " << endl; 
     cout << "/****   /*******      /**/**    /**/**       /*******    **  //** /*******     /**   " << endl; 
     cout << "/**/**  /**////       /**/**    /**/**       /**///**   **********/**////      /**   " << endl;
+    SetConsoleTextAttribute(hConsole, 6);
     cout << "/**//** /**       **  /**/**    /**//**    **/**  //** /**//////**/**          /**   " << endl;
     cout << "/** //**/********//***** //*******  //****** /**   //**/**     /**/**          /**   " << endl;
     cout << "//   // ////////  /////   ///////    //////  //     // //      // //           //    " << endl; 
-                                                                          
+
+    SetConsoleTextAttribute(hConsole, 15);                                              
     // BAGIAN I: Membaca Item
     // Me-construct container untuk tool dan nontool
     map<string, Tool> toolContainer;
